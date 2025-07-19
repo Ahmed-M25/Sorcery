@@ -1,0 +1,309 @@
+classDiagram
+direction TB
+    class Game {
+        -Player player1
+        -Player player2
+        -Player currentPlayer
+        -int turn
+        -bool gameOver
+        -bool testingMode
+        -string deck1File
+        -string deck2File
+        -string initFile
+        -CommandParser parser
+        -TriggerManager triggerManager
+        +Game(int argc, char** argv)
+        +void startGame()
+        +void nextTurn()
+        +void processCommand(string command)
+        +void checkWinCondition()
+        +bool isGameOver()
+        +void displayBoard()
+        +Player* getActivePlayer()
+        +Player* getInactivePlayer()
+        +void parseCommandLineArgs(int argc, char** argv)
+    }
+
+    class CommandParser {
+        +CommandParser()
+        +void parseCommand(string input, Game* game)
+        +bool isValidCommand(string command)
+        +void showHelp()
+        +void handleTestingCommands(string command, Game* game)
+        +Target parseTarget(string input)
+    }
+
+    class Target {
+        -int playerNum
+        -int position
+        -bool isRitual
+        -bool isPlayer
+        +Target()
+        +Target(int player, int pos, bool ritual)
+        +Target(int player)
+        +bool isValidTarget(Game* game)
+        +Card* getTargetCard(Game* game)
+        +Minion* getTargetMinion(Game* game)
+    }
+
+    class Player {
+        -string name
+        -int life
+        -int magic
+        -Hand hand
+        -Deck deck
+        -Board board
+        -Graveyard graveyard
+        -Ritual* ritual
+        +Player(string name)
+        +void drawCard()
+        +void playCard(int index, Target target, Game* game)
+        +void gainMagic(int amount)
+        +void takeDamage(int damage)
+        +void heal(int amount)
+        +bool isDead()
+        +void shuffleDeck()
+        +void startTurn()
+        +void endTurn()
+        +void restoreMinionsActions()
+        +void setRitual(Ritual* newRitual)
+        +void loadDeck(string filename)
+        +bool canAfford(int cost)
+        +void payMana(int cost)
+    }
+
+    class Hand {
+        -vector~Card*~ cards
+        -static int MAX_SIZE = 5
+        +Hand()
+        +void addCard(Card* card)
+        +Card* removeCard(int index)
+        +bool isFull()
+        +int size()
+        +void display()
+        +Card* getCard(int index)
+    }
+
+    class Deck {
+        -vector~Card*~ cards
+        +Deck()
+        +void addCard(Card* card)
+        +Card* drawCard()
+        +void shuffle()
+        +bool isEmpty()
+        +int size()
+        +void display()
+        +void loadFromFile(string filename)
+    }
+
+    class Board {
+        -vector~Minion*~ minions
+        -static int MAX_MINIONS = 5
+        +Board()
+        +void addMinion(Minion* minion)
+        +void removeMinion(int index)
+        +Minion* getMinion(int index)
+        +bool isFull()
+        +int size()
+        +void display()
+        +void restoreActions()
+        +vector~Minion*~ getMinions()
+    }
+
+    class Graveyard {
+        -vector~Minion*~ deadMinions
+        +Graveyard()
+        +void addMinion(Minion* minion)
+        +Minion* getTop()
+        +bool isEmpty()
+        +int size()
+        +void display()
+        +Minion* removeTop()
+    }
+
+    class Card {
+        #string name
+        #int cost
+        #Player* owner
+        #string description
+        +Card(string name, int cost, string desc)
+        +virtual ~Card()
+        +virtual void play(Target target, Game* game) = 0
+        +virtual Card* clone() = 0
+        +virtual string getType() = 0
+        +void setOwner(Player* player)
+    }
+
+    class Spell {
+        +Spell(string name, int cost, string desc)
+        +void play(Target target, Game* game) override
+        +Card* clone() override
+        +string getType() override
+    }
+
+    class Minion {
+        #int baseAttack
+        #int baseDefence
+        #int currentActions
+        #vector~AbilityCommand*~ activatedAbilities
+        #vector~TriggerObserver*~ triggeredAbilities
+        +Minion(string name, int cost, int att, int def, string desc)
+        +virtual void play(Target target, Game* game)
+        +Card* clone() override
+        +string getType() override
+        +virtual void attackPlayer(Player* target, Game* game)
+        +virtual void attackMinion(Minion* target, Game* game)
+        +void useAbility(int abilityIndex, Target target, Game* game)
+        +virtual void takeDamage(int damage, Game* game)
+        +void die(Game* game)
+        +void restoreActions()
+        +bool hasActions()
+        +virtual int getAttack()
+        +virtual int getDefence()
+        +void addActivatedAbility(AbilityCommand* ability)
+        +void addTriggeredAbility(TriggerObserver* trigger)
+        +void removeAllTriggers()
+    }
+
+    class EnchantmentDecorator {
+        #Minion* decoratedMinion
+        +EnchantmentDecorator(Minion* minion)
+        +virtual ~EnchantmentDecorator()
+        +void play(Target target, Game* game) override
+        +virtual int getAttack() = 0
+        +virtual int getDefence() = 0
+        +void attackPlayer(Player* target, Game* game) override
+        +void attackMinion(Minion* target, Game* game) override
+        +void takeDamage(int damage, Game* game) override
+        +virtual void applyEnchantment() = 0
+        +virtual void removeEnchantment() = 0
+    }
+
+    class Enchantment {
+        +Enchantment(string name, int cost, string desc)
+        +void play(Target target, Game* game) override
+        +Card* clone() override
+        +string getType() override
+        +virtual EnchantmentDecorator* createDecorator(Minion* target) = 0
+    }
+
+    class Ritual {
+        -int charges
+        -int activationCost
+        -TriggerObserver* triggerObserver
+        +Ritual(string name, int cost, string desc, int charges, int actCost)
+        +void play(Target target, Game* game) override
+        +Card* clone() override
+        +string getType() override
+        +void trigger(Game* game)
+        +bool canActivate()
+        +void useCharges(int amount)
+        +int getCharges()
+        +void addTriggerObserver(TriggerObserver* observer)
+    }
+
+    class AbilityCommand {
+        #string description
+        #int cost
+        +AbilityCommand(string desc, int cost)
+        +virtual ~AbilityCommand()
+        +virtual void execute(Target target, Game* game) = 0
+        +virtual AbilityCommand* clone() = 0
+        +int getCost()
+        +string getDescription()
+    }
+
+    class ActivatedAbility {
+        +ActivatedAbility(string desc, int cost)
+        +void execute(Target target, Game* game) override
+        +AbilityCommand* clone() override
+    }
+
+    class TriggerObserver {
+        #string description
+        #int cost
+        #string triggerType
+        +TriggerObserver(string desc, int cost, string trigger)
+        +virtual ~TriggerObserver()
+        +virtual void notify(string event, Game* game) = 0
+        +virtual TriggerObserver* clone() = 0
+        +string getTriggerType()
+        +bool matchesTrigger(string eventType)
+    }
+
+    class TriggeredAbility {
+        +TriggeredAbility(string desc, int cost, string trigger)
+        +void notify(string event, Game* game) override
+        +TriggerObserver* clone() override
+        +virtual void execute(Target target, Game* game) = 0
+    }
+
+    class TriggerManager {
+        -vector~TriggerObserver*~ allObservers
+        +TriggerManager()
+        +void registerObserver(TriggerObserver* observer)
+        +void unregisterObserver(TriggerObserver* observer)
+        +void notifyStartOfTurn(Player* player, Game* game)
+        +void notifyEndOfTurn(Player* player, Game* game)
+        +void notifyMinionEnters(Minion* minion, Game* game)
+        +void notifyMinionLeaves(Minion* minion, Game* game)
+        +void processInAPNAPOrder(string event, Game* game)
+        +void clearAll()
+    }
+
+    class CardFactory {
+        +static Card* createCard(string name)
+        +static void initializeCards()
+        -static Card* createAirElemental()
+        -static Card* createBanish()
+        -static Card* createGiantStrength()
+        -static Card* createDarkRitual()
+    }
+
+    class GameDisplay {
+        +static void displayBoard(Player* p1, Player* p2)
+        +static void displayHand(Player* player)
+        +static void displayCard(Card* card)
+        +static void displayMinion(Minion* minion)
+        +static void displayHelp()
+        +static void displayGameOver(string reason)
+        +static string cardToString(Card* card)
+        +static void loadAsciiArt()
+    }
+
+    <<abstract>> Card
+    <<abstract>> EnchantmentDecorator
+    <<abstract>> AbilityCommand
+    <<abstract>> TriggerObserver
+
+    Game *-- Player
+    Game *-- CommandParser
+    Game *-- TriggerManager
+
+    Player *-- Hand
+    Player *-- Deck
+    Player *-- Board
+    Player *-- Graveyard
+    
+    Minion *-- AbilityCommand
+    Minion *-- TriggerObserver
+
+    Ritual *-- TriggerObserver
+
+    TriggerManager *-- TriggerObserver
+
+    EnchantmentDecorator *-- Minion
+    Game o-- CardFactory
+    Game o-- GameDisplay
+    Hand o-- Card
+    Deck o-- Card
+    Board o-- Minion
+    Graveyard o-- Minion
+    CommandParser o-- Target
+    Card <|-- Spell
+    Card <|-- Minion
+    Card <|-- Enchantment
+    Card <|-- Ritual
+    Minion <|-- EnchantmentDecorator
+    AbilityCommand <|-- ActivatedAbility
+    TriggerObserver <|-- TriggeredAbility
