@@ -1,6 +1,7 @@
 #include "../include/CardFactory.h"
 #include "../include/Spell.h"
 #include "../include/Minion.h"
+#include "../include/Ritual.h"
 #include <iostream>
 #include <unordered_map>
 #include <functional>
@@ -33,7 +34,9 @@ std::unique_ptr<Card> CardFactory::createCard(const std::string& name) {
     // Enhancements
 
     // Rituals
-    
+    {"Aura of Power", []() { return std::make_unique<Ritual>("Aura of Power", 1, "Whenever a minion enters play under your contol, it gains +1/+1", 1, 4); }},
+    {"Standstill", []() { return std::make_unique<Ritual>("Standstill", 3, "Whenever a minion enters play, destroy it", 2, 4); }},
+    {"Dark Ritual", []() { return std::make_unique<Ritual>("Dark Ritual", 0, "At the start of your turn, gain 1 mana", 1, 5); }}, 
   };
 
   auto it = cardMap.find(name);
