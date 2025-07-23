@@ -54,21 +54,36 @@ void Player::playCard(int index, Target target, Game* game) {
       std::cout << "Board is full! Cannot play minion." << std::endl;
       return;
     }
+    // std::cout << "Step 1: got card\n";
 
-    Minion* minion = static_cast<Minion*>(card);
-    board.addMinion(minion);
-    payMagic(card->getCost());
+    std::unique_ptr<Card> playedCard = hand.removeCard(cardIndex);
+    std::unique_ptr<Minion> minion(static_cast<Minion*>(playedCard.release()));
 
-    // Remove from hand but don't delete (board now references it)
-    hand.removeCard(cardIndex);
+    if (!minion) {
+      std::cout << "Not a real minion\n";
+      return;
+    }
+    // std::cout << "Step 2: cast to minion\n";
 
     std::cout << name << " plays " << card->getName() << " (" << minion->getAttack() << "/" << minion->getDefence() << ")" << std::endl;
+
+    board.addMinion(std::move(minion));
+    // std::cout << "Step 3: added to board\n";
+
+    payMagic(card->getCost());
+    // std::cout << "Step 4: paid magic\n";
+
+
+    // Remove from hand but don't delete (board now references it)
+    // hand.removeCard(cardIndex);
+    // std::cout << "Step 5: removed from hand\n";
   }
   // Spells
   else if (card->getType() == "Spell") {
-    card->play(target, game);
+    std::unique_ptr<Card> playedCard = hand.removeCard(cardIndex);
+    playedCard->play(target, game);
     payMagic(card->getCost());
-    hand.removeCard(cardIndex); // Spell is consumed
+    // hand.removeCard(cardIndex); // Spell is consumed
   }
 }
 

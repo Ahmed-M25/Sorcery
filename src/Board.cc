@@ -3,10 +3,10 @@
 
 Board::Board() {}
 
-void Board::addMinion(Minion* minion) {
+void Board::addMinion(std::unique_ptr<Minion> minion) {
   if (!isFull() && minion) {
-    minions.push_back(minion);
     std::cout << minion->getName() << " enters the battlefield!" << std::endl;
+    minions.push_back(std::move(minion));
   }
   else {
     std::cout << "Board is full! Cannot play minion." << std::endl;
@@ -22,7 +22,7 @@ void Board::removeMinion(int index) {
 
 Minion* Board::getMinion(int index) {
   if (index >= 0 && index < static_cast<int>(minions.size())) {
-    return minions[index];
+    return minions[index].get();
   }
 
   return nullptr;
@@ -50,11 +50,15 @@ void Board::display() const {
 }
 
 void Board::restoreActions() {
-  for (auto* minion : minions) {
+  for (auto& minion : minions) {
     minion->restoreActions();
   }
 }
 
 std::vector<Minion*> Board::getMinions() {
-  return minions;
+  std::vector<Minion*> result;
+  for (const auto& minion : minions) {
+    result.push_back(minion.get());
+  }
+  return result;
 }

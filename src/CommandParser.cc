@@ -40,24 +40,42 @@ void CommandParser::execute(const std::string&command, Game* game){
       std::cout << "Invlaid card number!" << std::endl;
     }
   }
-  else if (cmd == "attack" && tokens.size() >= 2) {
-    try {
-      int minionIndex = std::stoi(tokens[1]);
-      int index = minionIndex - 1; // Conver to 0-indexed
+  else if (cmd == "attack") {
+    if(tokens.size() >= 2){
+      int i = std::stoi(tokens[1]);
+      Player* attacker = game->getActivePlayer();
+      Player* target = game->getInactivePlayer();
 
-      Minion* minion = activePlayer->getBoard().getMinion(index);
-      if (minion && minion->hasActions()) {
-        Player* opponent = game->getInactivePlayer();
-        minion->attackPlayer(opponent, game);
-        // TODO: Subtract action and apply damage
+      int index = i - 1;
+
+      Minion* minion = attacker->getBoard().getMinion(index);
+      if (!minion) {
+            std::cout << "No minion at position " << i << ".\n";
+            return;
       }
-      else {
-        std::cout << "Invalid minion or no actions remaining!" << std::endl;
-      }
+      minion->attackPlayer(target, game);
+      game->checkWinCondition();
+    } 
+    else {
+      std::cout << "Invalid attack command. Use: attack i\n";
     }
-    catch (const std::exception& e) {
-      std::cout << "Invalid minion number!" << std::endl;
-    }
+    // try {
+    //   int minionIndex = std::stoi(tokens[1]);
+    //   int index = minionIndex - 1; // Conver to 0-indexed
+
+    //   Minion* minion = activePlayer->getBoard().getMinion(index);
+    //   if (minion && minion->hasActions()) {
+    //     Player* opponent = game->getInactivePlayer();
+    //     minion->attackPlayer(opponent, game);
+    //     // TODO: Subtract action and apply damage
+    //   }
+    //   else {
+    //     std::cout << "Invalid minion or no actions remaining!" << std::endl;
+    //   }
+    // }
+    // catch (const std::exception& e) {
+    //   std::cout << "Invalid minion number!" << std::endl;
+    // }
   }
   else if (cmd == "end") {
     game->nextTurn();

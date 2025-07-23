@@ -5,6 +5,7 @@
 #include "Hand.h"
 #include "Deck.h"
 #include "Board.h"
+#include "Ritual.h"
 
 class Game;
 class Target;
@@ -17,6 +18,7 @@ private:
   Hand hand;
   Deck deck;
   Board board;
+  std::unique_ptr<Ritual> ritual;
   // TODO: add later
   // Graveyard graveyard;
   // Ritual* ritual;
@@ -39,6 +41,9 @@ public:
   void startTurn();
   void endTurn();
   void restoreMinionsActions();
+  void setRitual(std::unique_ptr<Ritual> newRitual) {
+    ritual = std::move(newRitual);
+  }
 
   // Resource management
   void gainMagic(int amount);

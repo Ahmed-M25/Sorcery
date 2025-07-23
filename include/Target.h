@@ -9,7 +9,7 @@ class Target {
 private:
   int playerNum;
   int position;
-  bool isRitual;
+  bool Ritual;
   bool isPlayer;
 
 public:
@@ -20,6 +20,9 @@ public:
   bool isValidTarget(Game* game);
   Card* getTargetCard(Game* game);
   Minion* getTargetMinion(Game* game);
+
+  bool isRitual() const { return Ritual; }
+  int  getPosition()  const { return position; }
 };
 
 #endif

@@ -4,7 +4,7 @@
 #include <fstream>
 #include <sstream>
 
-Game::Game(int argc, char** argv) : turn{1}, gameOver{false}, testingMode{false}, deck1File{"default.deck"}, deck2File{"default.deck"} {
+Game::Game(int argc, char** argv) : turn{1}, gameOver{false}, testingMode{false}, deck1File{"default.deck"}, deck2File{"default.deck"}, initFile{""} {
   parseCommandLineArgs(argc, argv);
 
   // Create players with default names for now
@@ -38,16 +38,32 @@ void Game::parseCommandLineArgs(int argc, char** argv) {
 void Game::startGame() {
   std::cout << "Welcome to Sorcery!" << std::endl;
 
-  // Get player names
-  std::string name1, name2;
-  std::cout << "Player 1, enter your name: ";
-  std::cin >> name1;
-  std::cout << "Player 2, enter your name: ";
-  std::cin >> name2;
+  if (!initFile.empty()) {
+    std::ifstream initStream(initFile);
+    std::string line;
 
-  player1 = std::make_unique<Player>(name1);
-  player2 = std::make_unique<Player>(name2);
-  currentPlayer = player1.get();
+    // First two lines are expected to be names
+    std::getline(initStream, line);
+    player1 = std::make_unique<Player>(line);
+
+    std::getline(initStream, line);
+    player2 = std::make_unique<Player>(line);
+
+    currentPlayer = player1.get();
+
+    std::cout << "Names loaded from init file: " << player1->getName() << " vs " << player2->getName() << "\n";
+  } else {
+    // Get player names
+    std::string name1, name2;
+    std::cout << "Player 1, enter your name: ";
+    std::cin >> name1;
+    std::cout << "Player 2, enter your name: ";
+    std::cin >> name2;
+
+    player1 = std::make_unique<Player>(name1);
+    player2 = std::make_unique<Player>(name2);
+    currentPlayer = player1.get();
+  }
 
   // Load decks from files
   std::cout << "\nLoading decks..." << std::endl;
@@ -61,18 +77,31 @@ void Game::startGame() {
   }
 
   // Deal starting hands
-  std::cout << "\nDealing starting hands..." << std::endl;
+  // std::cout << "\nDealing starting hands..." << std::endl;
   for (int i = 0; i < 5; i++) {
     player1->drawCard();
     player2->drawCard();
   }
 
+  if (!initFile.empty()) {
+    std::ifstream initStream(initFile);
+    std::string line;
+    std::getline(initStream, line);
+    std::getline(initStream, line);
+
+    while (std::getline(initStream, line)) {
+      if (line.empty()) continue;
+      processCommand(line);
+      if (gameOver) return;
+    }
+  }
+
   // Show starting status
   std::cout << "\n=== GAME START ===" << std::endl;
-  std::cout << player1->getName() << " hand: ";
-  player1->getHand().display();
-  std::cout << player2->getName() << " hand: ";
-  player2->getHand().display();
+  // std::cout << player1->getName() << " hand: ";
+  // player1->getHand().display();
+  // std::cout << player2->getName() << " hand: ";
+  // player2->getHand().display();
 
   std::cout << currentPlayer->getName() << "'s turn." << std::endl;
   std::cout << "Enter commands (type 'quit' to exit):" << std::endl;
@@ -100,10 +129,12 @@ Player* Game::getInactivePlayer() {
 }
 
 void Game::nextTurn() {
+  triggerManager.notifyEndOfTurn(currentPlayer, this);
   currentPlayer->endTurn();
   currentPlayer = (currentPlayer == player1.get()) ? player2.get() : player1.get();
   turn++;
   currentPlayer->startTurn();
+  triggerManager.notifyStartOfTurn(currentPlayer, this);
 
   checkWinCondition();
   if (!gameOver) {

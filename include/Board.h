@@ -7,14 +7,14 @@
 
 class Board {
 private: 
-  std::vector<Minion*> minions; // Non-owning pointers (minions owned by hand/player)
+  std::vector<std::unique_ptr<Minion>> minions; 
   static const int MAX_MINIONS = 5;
 
 public:
   Board();
   ~Board() = default;
 
-  void addMinion(Minion* minion);
+  void addMinion(std::unique_ptr<Minion> minion);
   void removeMinion(int index);
   Minion* getMinion(int index);
   bool isFull() const;

@@ -5,6 +5,8 @@
 #include <memory>
 #include "Player.h"
 #include "CommandParser.h"
+#include "TriggerManager.h"
+
 
 class Game {
 private:
@@ -18,6 +20,7 @@ private:
   std::string deck2File;
   std::string initFile;
   std::unique_ptr<CommandParser> parser;
+  TriggerManager triggerManager;
 
 public:
   Game(int argc, char** argv);

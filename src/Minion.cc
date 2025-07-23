@@ -21,6 +21,8 @@ std::string Minion::getType() const {
 void Minion::attackPlayer(Player* target, Game* game) {
   std::cout << name << " attacks player for " << baseAttack << " damage!" << std::endl;
   // TODO: Implement damage to a player
+  target->takeDamage(this->getAttack());
+  std::cout << name << " attacks " << target->getName() << " for " << getAttack() << " damage!\n";
 }
 
 void Minion::attackMinion(Minion* target, Game* game) {

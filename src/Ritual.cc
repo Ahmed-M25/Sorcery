@@ -5,11 +5,7 @@
 
 Ritual::Ritual(const std::string& name, int cost, const std::string& desc, int initialCharges, int activationCost)
   : Card(name, cost, desc),
-    charges(initialCharges),
-    actionCost(activationCost),
-    triggerObserver(nullptr)
-{
-}
+    charges(initialCharges), actionCost(activationCost), triggerObserver(nullptr) {}
 
 Ritual::~Ritual() = default;
 
