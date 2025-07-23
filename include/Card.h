@@ -30,6 +30,7 @@ public:
   // Getters (for debugging/display only)
   const std::string& getName() const { return name; }
   int getCost() const { return cost; }
+  const std::string& getDescription() const { return description; }
   Player* getOwner() const { return owner; }
 };
 

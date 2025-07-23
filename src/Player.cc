@@ -65,6 +65,8 @@ void Player::playCard(int index, Target target, Game* game) {
     }
     // std::cout << "Step 2: cast to minion\n";
 
+    minion->setOwner(this);
+
     std::cout << name << " plays " << card->getName() << " (" << minion->getAttack() << "/" << minion->getDefence() << ")" << std::endl;
 
     board.addMinion(std::move(minion));

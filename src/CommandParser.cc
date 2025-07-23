@@ -6,7 +6,7 @@
 
 CommandParser::CommandParser() {}
 
-void CommandParser::execute(const std::string&command, Game* game){
+void CommandParser::execute(const std::string&command, Game* game) {
   std::istringstream iss(command);
   std::vector<std::string> tokens;
   std::string token;
@@ -30,18 +30,47 @@ void CommandParser::execute(const std::string&command, Game* game){
   else if (cmd == "board") {
     game->displayBoard();
   }
-  else if (cmd == "play" && tokens.size() >= 2) {
-    try {
-      int cardIndex = std::stoi(tokens[1]);
-      Target target; // Empty target for now (no targeting implemented yet)
-      activePlayer->playCard(cardIndex, target, game);
+  else if (cmd == "play") {
+    if(tokens.size() >= 4){
+      try {
+            int cardIndex = std::stoi(tokens[1]);
+            int playerNum = std::stoi(tokens[2]);
+            
+            Target target;
+            
+            if (tokens[3] == "r") {
+                // Targeting ritual
+                target = Target(playerNum, 0, true);
+            } else {
+                // Targeting minion
+                int targetPosition = std::stoi(tokens[3]);
+                target = Target(playerNum, targetPosition - 1, false); 
+            }
+            
+            activePlayer->playCard(cardIndex, target, game);
+            
+        } catch (const std::exception& e) {
+            std::cout << "Invalid play command format!" << std::endl;
+        }
     }
-    catch (const std::exception& e) {
-      std::cout << "Invlaid card number!" << std::endl;
+    else if(tokens.size() >= 2){
+      try {
+        int cardIndex = std::stoi(tokens[1]);
+        Target target;
+        activePlayer->playCard(cardIndex, target, game);
+      }
+      catch (const std::exception& e) {
+        std::cout << "Invlaid card number!" << std::endl;
+      }
     }
+    else {
+        std::cout << "Invalid play command. Use: play i or play i p t" << std::endl;
+    }
+
   }
   else if (cmd == "attack") {
-    if(tokens.size() >= 2){
+    // Attacking player
+    if (tokens.size() == 2) {
       int i = std::stoi(tokens[1]);
       Player* attacker = game->getActivePlayer();
       Player* target = game->getInactivePlayer();
@@ -53,29 +82,55 @@ void CommandParser::execute(const std::string&command, Game* game){
             std::cout << "No minion at position " << i << ".\n";
             return;
       }
-      minion->attackPlayer(target, game);
-      game->checkWinCondition();
-    } 
-    else {
-      std::cout << "Invalid attack command. Use: attack i\n";
-    }
-    // try {
-    //   int minionIndex = std::stoi(tokens[1]);
-    //   int index = minionIndex - 1; // Conver to 0-indexed
 
-    //   Minion* minion = activePlayer->getBoard().getMinion(index);
-    //   if (minion && minion->hasActions()) {
-    //     Player* opponent = game->getInactivePlayer();
-    //     minion->attackPlayer(opponent, game);
-    //     // TODO: Subtract action and apply damage
-    //   }
-    //   else {
-    //     std::cout << "Invalid minion or no actions remaining!" << std::endl;
-    //   }
-    // }
-    // catch (const std::exception& e) {
-    //   std::cout << "Invalid minion number!" << std::endl;
-    // }
+      // Check if attacking minion has actions
+      if (!minion->hasActions()) {
+        std::cout << minion->getName() << " has no actions remaining!\n";;
+        return;
+      }
+
+      minion->attackPlayer(target, game);
+      minion->useAction();
+      game->checkWinCondition();
+    }
+    // Attacking a minion
+    else if (tokens.size() == 3) {
+      try {
+        int attackerIndex = std::stoi(tokens[1]);
+        int defenderIndex = std::stoi(tokens[2]);
+
+        Player* attacker = game->getActivePlayer();
+        Player* defender = game->getInactivePlayer();
+
+        // Convert to 0-indexed
+        int attackerPos = attackerIndex - 1;
+        int defenderPos = defenderIndex - 1;
+
+        Minion* attackingMinion = attacker->getBoard().getMinion(attackerPos);
+        Minion* defendingMinion = defender->getBoard().getMinion(defenderPos);
+
+        if (!attackingMinion) {
+          std::cout << "No minion at position " << attackerIndex << ".\n";
+          return;
+        }
+        if (!defendingMinion) {
+          std::cout << "No enemy minion at position " << defenderIndex << ".\n";
+          return;
+        }
+
+        // Check if attacking minion has actions
+        if (!attackingMinion->hasActions()) {
+          std::cout << attackingMinion->getName() << " has no actions remaining!\n";;
+          return;
+        }
+
+        attackingMinion->attackMinion(defendingMinion, game);
+        attackingMinion->useAction();
+      }
+      catch (const std::exception& e) {
+        std::cout << "Invalid minion numbers!\n";
+      }
+    }
   }
   else if (cmd == "end") {
     game->nextTurn();
@@ -97,6 +152,6 @@ void CommandParser::showHelp() {
   inspect minion -- View a minion's card and all enchantments on that minion.
   hand -- Describe all cards in your hand.
   board -- Describe all cards on the board.
-)" << std::endl;
+  )" << std::endl;
 }
 

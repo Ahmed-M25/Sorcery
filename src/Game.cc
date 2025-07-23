@@ -83,6 +83,8 @@ void Game::startGame() {
     player2->drawCard();
   }
 
+  currentPlayer->startTurn();
+
   if (!initFile.empty()) {
     std::ifstream initStream(initFile);
     std::string line;

@@ -19,27 +19,46 @@ std::string Minion::getType() const {
 }
 
 void Minion::attackPlayer(Player* target, Game* game) {
-  std::cout << name << " attacks player for " << baseAttack << " damage!" << std::endl;
+  std::cout << name << " attacks " << target->getName() << " for " << getAttack() << " damage!\n";
   // TODO: Implement damage to a player
   target->takeDamage(this->getAttack());
-  std::cout << name << " attacks " << target->getName() << " for " << getAttack() << " damage!\n";
 }
 
 void Minion::attackMinion(Minion* target, Game* game) {
-  std::cout << name << " attacks " << target->name << "!" << std::endl;
+  if (!target) {
+    std::cout << "Invalid target for attack!\n";
+    return;
+  }
+
+  std::cout << name << " (" << getAttack() << "/" << getDefence() << ") attacks " << target->name << " (" << target->getAttack() << "/" << target->getDefence() << ")!\n";
+
+  // Store original stats for damage calculation
+  int attackerDamage = this->getAttack();
+  int defenderDamage = target->getAttack();
+
+  // Apply damage simultaneously
+  this->takeDamage(defenderDamage, game);
+  target->takeDamage(attackerDamage, game);
 }
 
 void Minion::takeDamage(int damage, Game* game) {
   baseDefence -= damage;
   std::cout << name << " takes " << damage << " damage. Defence: " << baseDefence << std::endl;
   if (baseDefence <= 0) {
-    die(game);
+    this->die(game);
   }
 }
 
 void Minion::die(Game* game) {
   std::cout << name << " dies!" << std::endl;
-  // TODO: Move to graveyard 
+  
+  Player* owner = this->getOwner();
+  if (owner) {
+    auto deadMinion = owner->getBoard().removeMinion(this);
+    if (deadMinion) {
+      owner->getGraveyard().addMinion(std::move(deadMinion));
+    }
+  }
 }
 
 void Minion::restoreActions() {
@@ -48,6 +67,12 @@ void Minion::restoreActions() {
 
 bool Minion::hasActions() const {
   return currentActions > 0;
+}
+
+void Minion::useAction() {
+  if (currentActions > 0) {
+    currentActions--;
+  }
 }
 
 int Minion::getAttack() const {

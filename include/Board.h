@@ -15,13 +15,14 @@ public:
   ~Board() = default;
 
   void addMinion(std::unique_ptr<Minion> minion);
-  void removeMinion(int index);
+  std::unique_ptr<Minion> removeMinion(int index);
   Minion* getMinion(int index);
   bool isFull() const;
   int size() const;
   void display() const;
   void restoreActions();
   std::vector<Minion*> getMinions();
+  std::unique_ptr<Minion> removeMinion(Minion* minion);
 };
 
 #endif

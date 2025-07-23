@@ -11,9 +11,12 @@ public:
   Spell(const std::string& name, int cost, const std::string& desc);
   virtual ~Spell() = default;
 
-  virtual void play(Target target, Game* game) override;
-  std::unique_ptr<Card> clone() const override;
-  std::string getType() const override { return "Spell"; };
+  virtual void play(Target target, Game* game) = 0;
+  std::unique_ptr<Card> clone() const = 0;
+  std::string getType() const {
+    return "Spell";
+  }
+
 };
 
 #endif

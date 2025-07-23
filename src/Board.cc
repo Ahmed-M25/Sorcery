@@ -13,11 +13,14 @@ void Board::addMinion(std::unique_ptr<Minion> minion) {
   }
 }
 
-void Board::removeMinion(int index) {
+std::unique_ptr<Minion> Board::removeMinion(int index) {
   if (index >= 0 && index < static_cast<int>(minions.size())) {
     std::cout << minions[index]->getName() << " leaves the battlefield." << std::endl;
+    std::unique_ptr<Minion> removedMinion = std::move(minions[index]);
     minions.erase(minions.begin() + index);
+    return removedMinion;
   }
+  return nullptr;
 }
 
 Minion* Board::getMinion(int index) {
@@ -61,4 +64,17 @@ std::vector<Minion*> Board::getMinions() {
     result.push_back(minion.get());
   }
   return result;
+}
+
+std::unique_ptr<Minion> Board::removeMinion(Minion* minion) {
+  for (auto it = minions.begin(); it != minions.end(); it++) {
+    if (it->get() == minion) {
+      std::unique_ptr<Minion> removedMinion = std::move(*it);
+      minions.erase(it);
+      std::cout << removedMinion->getName() << " leaves the battlefield." << std::endl;
+      return removedMinion;
+    }
+  }
+
+  return nullptr;
 }

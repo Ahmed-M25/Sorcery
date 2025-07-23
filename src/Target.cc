@@ -11,6 +11,7 @@ Target::Target(int player) : playerNum{player}, position{0}, isRitual{false}, is
 
 bool Target::isValidTarget(Game* game) {
   // TODO: Implement validation logic
+  
   return true;
 }
 

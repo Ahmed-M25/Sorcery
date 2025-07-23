@@ -29,6 +29,7 @@ public:
   void die(Game* game);
   void restoreActions();
   bool hasActions() const;
+  void useAction();
 
   // Getters
   virtual int getAttack() const;

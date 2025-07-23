@@ -34,6 +34,14 @@ public:
   bool isGameOver() const;
   void displayBoard();
 
+  Player* getPlayer1() const {
+    return player1.get();
+  };
+  Player* getPlayer2() const {
+    return player2.get();
+  };
+
+
   // Player access
   Player* getActivePlayer();
   Player* getInactivePlayer();
