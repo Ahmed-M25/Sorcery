@@ -6,11 +6,11 @@
 
 class TriggeredAbility : public TriggerObserver {
 public:
-    TriggeredAbility(std::string desc, int cost, std::string trigger);
+    TriggeredAbility(const std::string& desc, int cost, const std::string& trigger);
 
-    void notify(std::string event, Game* game) override;
+    void notify(const std::string& event, Game* game) override;
 
-    virtual void execute(Target target, Game* game) = 0;
+    virtual void execute(Game* game) = 0;
 
     virtual std::unique_ptr<TriggeredAbility> clone() const = 0;
 };

@@ -29,8 +29,9 @@ std::unique_ptr<Card> CardFactory::createCard(const std::string& name) {
     // {"Raise Dead", []() { return std::make_unique<Spell>("Raise Dead", 1, "Resurrect the top minion in your graveyard and set its defence to 1."); }},
     // {"Disenchant", []() { return std::make_unique<Spell>("Disenchant", 1, "Destroy the top enchantment on target minion."); }},
     // {"Recharge", []() { return std::make_unique<Spell>("Recharge", 1, "Your ritual gains 3 charges."); }},
-    {"Unsummon", []() { return std::make_unique<Unsummon>(); }},
-    {"Banish", []() { return std::make_unique<Banish>(); }},
+    {"Unsummon", []() { return std::make_unique<Unsummon>("Unsummon", 1, "Return target minion to its owner's hand."); }},
+    {"Banish", []() { return std::make_unique<Banish>("Banish", 2, "Destroy target minion or ritual."); }},
+
 
     
     // Enhancements

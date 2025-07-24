@@ -15,7 +15,7 @@ public:
     TriggerObserver(std::string desc, int cost, std::string trigger);
     virtual ~TriggerObserver() = default;
 
-    virtual void notify(std::string event, Game* game) = 0;
+    virtual void notify(const std::string& event, Game* game) = 0;
 
     bool matchesTrigger(const std::string& eventType) const;
     std::string getTriggerType() const;
