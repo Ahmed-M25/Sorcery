@@ -147,11 +147,27 @@ void Game::nextTurn() {
 void Game::displayBoard() {
   // Will fix to ASCII later
   std::cout << "\n=== BOARD STATE ===" << std::endl;
+  
+  // Player 1
   std::cout << player1->getName() << " (Life: " << player1->getLife() << ", Magic: " << player1->getMagic() << ")" << std::endl;
+  if (player1->getRitual()) {
+    std::cout << "Ritual: " << player1->getRitual()->getName() << " (" << player1->getRitual()->getCharges() << " charges)" << std::endl;
+  } else {
+    std::cout << "Ritual: [None]" << std::endl;
+  }
   player1->getBoard().display();
-
+  
+  std::cout << std::endl;
+  
+  // Player 2
   std::cout << player2->getName() << " (Life: " << player2->getLife() << ", Magic: " << player2->getMagic() << ")" << std::endl;
+  if (player2->getRitual()) {
+    std::cout << "Ritual: " << player2->getRitual()->getName() << " (" << player2->getRitual()->getCharges() << " charges)" << std::endl;
+  } else {
+    std::cout << "Ritual: [None]" << std::endl;
+  }
   player2->getBoard().display();
+  
   std::cout << "===================" << std::endl;
 }
 

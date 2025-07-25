@@ -3,10 +3,11 @@
 
 #include "Card.h"
 #include "TriggerObserver.h"
+#include <memory>
 
 class Ritual : public Card {
 public:
-    Ritual(const std::string& name, int cost, const std::string& desc, int charges, int actCost);
+    Ritual(const std::string& name, int cost, const std::string& desc, int initialCharges, int activationCost);
     ~Ritual() override;
     
     void play(Target target, Game* game) override;
@@ -24,10 +25,14 @@ public:
     
     void addTriggerObserver(TriggerObserver* observer);
 
+    // Trigger management
+    void setupTrigger(Player* owner);
+    TriggerObserver* getTriggerObserver() const { return triggerObserver.get(); }
+
 private:
     int charges; // Number of charges the ritual has
     int actionCost; // Cost in actions to activate the ritual
-    TriggerObserver* triggerObserver; // Observer for handling triggers related to the ritual
+    std::unique_ptr<TriggerObserver> triggerObserver; // Observer for handling triggers related to the ritual
 };
 
 #endif

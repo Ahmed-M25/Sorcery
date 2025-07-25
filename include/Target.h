@@ -24,7 +24,7 @@ public:
   bool Ritual() const { return isRitual; }
   int getPosition() const { return position; }
   int getPlayerNum() const { return playerNum; }
-  bool Player() const { return isPlayer; }
+  bool targetsPlayer() const { return isPlayer; }
 };
 
 #endif
