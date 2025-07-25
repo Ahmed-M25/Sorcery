@@ -21,8 +21,6 @@ private:
   Board board;
   Graveyard graveyard;
   std::unique_ptr<Ritual> ritual;
-  // TODO: add later
-  // Ritual* ritual;
 
 public:
   Player(const std::string& name);
@@ -56,6 +54,7 @@ public:
   Deck& getDeck() { return deck; }
   Board& getBoard() { return board; }
   Graveyard& getGraveyard() { return graveyard; }
+  Ritual* getRitual() const { return ritual.get(); }
   int getLife() const { return life; }
   int getMagic() const { return magic; }
 };

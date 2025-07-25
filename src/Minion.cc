@@ -52,6 +52,9 @@ void Minion::takeDamage(int damage, Game* game) {
 void Minion::die(Game* game) {
   std::cout << name << " dies!" << std::endl;
   
+  // Notify TriggerManager that this minion is leaving play
+  game->getTriggerManager().notifyMinionLeaves(this, game);
+  
   Player* owner = this->getOwner();
   if (owner) {
     auto deadMinion = owner->getBoard().removeMinion(this);

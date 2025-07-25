@@ -41,6 +41,8 @@ public:
     return player2.get();
   };
 
+  // Trigger system access
+  TriggerManager& getTriggerManager() { return triggerManager; }
 
   // Player access
   Player* getActivePlayer();

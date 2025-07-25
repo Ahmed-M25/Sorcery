@@ -10,9 +10,10 @@ TriggerManager::TriggerManager() {}
 void TriggerManager::registerObserver(std::unique_ptr<TriggerObserver> observer) {
     allObservers.push_back(std::move(observer));
 }
-void TriggerManager::unregisterObserver(std::unique_ptr<TriggerObserver> observer) {
+
+void TriggerManager::unregisterObserver(TriggerObserver* observer) {
     for (auto it = allObservers.begin(); it != allObservers.end(); ++it) {
-        if (it->get() == observer.get()) {
+        if (it->get() == observer) {
             allObservers.erase(it);
             break;
         }

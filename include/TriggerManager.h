@@ -17,7 +17,7 @@ public:
     TriggerManager();
 
     void registerObserver(std::unique_ptr<TriggerObserver> observer);
-    void unregisterObserver(std::unique_ptr<TriggerObserver> observer);
+    void unregisterObserver(TriggerObserver* observer);
 
     void notifyStartOfTurn(Player* player, Game* game);
     void notifyEndOfTurn(Player* player, Game* game);
