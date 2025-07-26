@@ -3,4 +3,6 @@ obj/CommandParser.o: src/CommandParser.cc src/../include/CommandParser.h \
   src/../include/Hand.h src/../include/Card.h src/../include/Deck.h \
   src/../include/Board.h src/../include/Minion.h \
   src/../include/Graveyard.h src/../include/Ritual.h \
-  src/../include/TriggerObserver.h src/../include/TriggerManager.h
+  src/../include/TriggerObserver.h src/../include/TriggerManager.h \
+  src/../include/GameDisplay.h \
+  src/../include/../include/ascii_graphics.h

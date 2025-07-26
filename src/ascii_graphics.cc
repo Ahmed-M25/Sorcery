@@ -1,4 +1,4 @@
-#include "ascii_graphics.h"
+#include "../include/ascii_graphics.h"
 #include <sstream>
 
 static void prepare_for_replace(card_template_t &);

@@ -24,6 +24,8 @@ public:
     int getCharges() const;
 
     void addCharges(int amount);
+
+    int getActivationCost() const { return actionCost; }
     
     void addTriggerObserver(TriggerObserver* observer);
 
