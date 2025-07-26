@@ -1,6 +1,7 @@
 #include "../include/Minion.h"
 #include "../include/Game.h"
 #include "../include/Player.h"
+#include "../include/EnchantmentDecorator.h"
 #include <iostream>
 
 Minion::Minion(const std::string& name, int cost, int att, int def, const std::string& desc) : Card{name, cost, desc}, baseAttack{att}, baseDefence{def}, currentActions{0} {}
@@ -93,3 +94,4 @@ void Minion::setAttack(int att) {
 void Minion::setDefence(int def) {
   baseDefence = def;
 }
+

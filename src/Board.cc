@@ -78,3 +78,9 @@ std::unique_ptr<Minion> Board::removeMinion(Minion* minion) {
 
   return nullptr;
 }
+
+void Board::replaceMinion(int index, std::unique_ptr<Minion> newMinion) {
+    if (index >= 0 && index < static_cast<int>(minions.size())) {
+        minions[index] = std::move(newMinion);
+    }
+}

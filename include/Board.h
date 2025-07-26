@@ -23,6 +23,7 @@ public:
   void restoreActions();
   std::vector<Minion*> getMinions();
   std::unique_ptr<Minion> removeMinion(Minion* minion);
+  void replaceMinion(int index, std::unique_ptr<Minion> newMinion);
 };
 
 #endif

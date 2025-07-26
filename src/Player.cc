@@ -110,6 +110,12 @@ void Player::playCard(int index, Target target, Game* game) {
     // playedCard is now owned by the player's ritual slot, don't delete it
     playedCard.release();
   }
+  else if (card->getType() == "Enchantment") {
+    std::unique_ptr<Card> playedCard = hand.removeCard(cardIndex);
+    playedCard->play(target, game);
+    payMagic(card->getCost());
+    // hand.removeCard(cardIndex); // Enchantment is consumed
+}
 }
 
 void Player::takeDamage(int damage) {

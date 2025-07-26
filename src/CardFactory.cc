@@ -7,6 +7,8 @@
 #include "../include/Blizzard.h"
 #include "../include/RaiseDead.h"
 #include "../include/Recharge.h"
+#include "../include/GiantStrength.h"
+#include "../include/Enrage.h"
 #include <iostream>
 #include <unordered_map>
 #include <functional>
@@ -29,7 +31,6 @@ std::unique_ptr<Card> CardFactory::createCard(const std::string& name) {
 
     // Spells
     // {"Disenchant", []() { return std::make_unique<Spell>("Disenchant", 1, "Destroy the top enchantment on target minion."); }},
-    // {"Recharge", []() { return std::make_unique<Spell>("Recharge", 1, "Your ritual gains 3 charges."); }},
     {"Unsummon", []() { return std::make_unique<Unsummon>("Unsummon", 1, "Return target minion to its owner's hand."); }},
     {"Banish", []() { return std::make_unique<Banish>("Banish", 2, "Destroy target minion or ritual."); }},
     {"Blizzard", []() { return std::make_unique<Blizzard>("Blizzard", 3, "Deal 2 damage to all minions."); }},
@@ -39,6 +40,8 @@ std::unique_ptr<Card> CardFactory::createCard(const std::string& name) {
 
     
     // Enhancements
+    {"Giant Strength", []() { return std::make_unique<GiantStrength>(); }},
+    {"Enrage", []() { return std::make_unique<Enrage>(); }},
 
     // Rituals
     {"Aura of Power", []() { return std::make_unique<Ritual>("Aura of Power", 1, "Whenever a minion enters play under your control, it gains +1/+1", 4, 1); }},

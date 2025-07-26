@@ -5,12 +5,13 @@
 
 class EnchantmentDecorator : public Minion {
 protected:
-  Minion* decoratedMinion;
+  int baseAttack;
+  int baseDefence;
 public:
   EnchantmentDecorator(Minion* minion);
   ~EnchantmentDecorator();
 
-  std::string getType() const override { return decoratedMinion->getType(); }
+  std::string getType() const override { return "Minion"; }
   
   void attackPlayer(Player* target, Game* gane) override;
   void attackMinion(Minion* target, Game* game) override;
@@ -19,8 +20,8 @@ public:
   void restoreActions();
   bool hasActions() const;
 
-  virtual int getAttack() const = 0;
-  virtual int getDefence() const = 0;
+  virtual int getAttack() const override = 0;
+  virtual int getDefence() const override = 0;
 
   virtual void applyEnchantment()  {}
   virtual void removeEnchantment() {}

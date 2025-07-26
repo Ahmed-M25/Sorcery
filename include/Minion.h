@@ -3,6 +3,8 @@
 
 #include "Card.h"
 #include "Target.h"
+#include <vector>
+#include <memory>
 
 class Game;
 class Player;
@@ -17,6 +19,9 @@ protected:
 public:
   Minion(const std::string& name, int cost, int att, int def, const std::string& desc);
   ~Minion() = default;
+  Minion(const Minion&) = delete;
+  Minion& operator=(const Minion&) = delete;
+
 
   virtual void play(Target target, Game* game) override;
   std::unique_ptr<Card> clone() const override;
@@ -32,12 +37,13 @@ public:
   void useAction();
 
   // Getters
-  int getAttack() const;
-  int getDefence() const;
+  virtual int getAttack() const;
+  virtual int getDefence() const;
 
   // Setters
   void setAttack(int att);
   void setDefence(int def);
+
 };
 
 #endif
