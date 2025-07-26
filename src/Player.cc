@@ -90,45 +90,25 @@ void Player::playCard(int index, Target target, Game* game) {
   // Rituals
   else if (card->getType() == "Ritual") {
     std::unique_ptr<Card> playedCard = hand.removeCard(cardIndex);
-    std::unique_ptr<Ritual> newRitual(static_cast<Ritual*>(playedCard.release()));
+    Ritual* ritual = static_cast<Ritual*>(playedCard.get());
     
-    if (!newRitual) {
+    if (!ritual) {
       std::cout << "Not a real ritual\n";
       return;
     }
     
-    // Unregister old ritual's trigger if one exists
-    if (ritual && ritual->getTriggerObserver()) {
-      game->getTriggerManager().unregisterObserver(ritual->getTriggerObserver());
-      std::cout << name << "'s " << ritual->getName() << " is replaced by " << newRitual->getName() << "." << std::endl;
-    } else {
-      std::cout << name << " plays " << newRitual->getName() << " with " << newRitual->getCharges() << " charges." << std::endl;
+    if (!canAfford(ritual->getCost())) {
+      std::cout << "Not enough magic to play " << ritual->getName() << std::endl;
+      hand.addCard(std::move(playedCard)); // Put it back
+      return;
     }
     
-    newRitual->setOwner(this);
-    setRitual(std::move(newRitual));
+    ritual->setOwner(this);
+    ritual->play(target, game);
+    payMagic(ritual->getCost());
     
-    // Setup the ritual's trigger (this creates the trigger inside the ritual)
-    ritual->setupTrigger(this);
-    
-    // Register the trigger with the global trigger manager
-    if (ritual->getTriggerObserver()) {
-      // For now, let's simplify: create a new trigger instance for the TriggerManager
-      if (ritual->getName() == "Dark Ritual") {
-        auto globalTrigger = std::make_unique<DarkRitualTrigger>(ritual.get());
-        game->getTriggerManager().registerObserver(std::move(globalTrigger));
-      } 
-      else if (ritual->getName() == "Aura of Power") {
-        auto globalTrigger = std::make_unique<AuraPowerTrigger>(ritual.get());
-        game->getTriggerManager().registerObserver(std::move(globalTrigger));
-      } 
-      else if (ritual->getName() == "Standstill") {
-        auto globalTrigger = std::make_unique<StandstillTrigger>(ritual.get());
-        game->getTriggerManager().registerObserver(std::move(globalTrigger));
-      }
-    }
-    
-    payMagic(card->getCost());
+    // playedCard is now owned by the player's ritual slot, don't delete it
+    playedCard.release();
   }
 }
 

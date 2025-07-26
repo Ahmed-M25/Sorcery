@@ -15,6 +15,7 @@ public:
   DarkRitualTrigger(Ritual* ritual);
     
   void execute(Game* game) override;
+  Ritual* getRitual() const override { return ritual; }
   std::unique_ptr<TriggeredAbility> clone() const override;
 };
 

@@ -22,6 +22,8 @@ public:
 
     void useCharges(int amount);
     int getCharges() const;
+
+    void addCharges(int amount);
     
     void addTriggerObserver(TriggerObserver* observer);
 

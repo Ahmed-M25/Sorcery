@@ -85,3 +85,11 @@ int Minion::getAttack() const {
 int Minion::getDefence() const {
   return baseDefence;
 }
+
+void Minion::setAttack(int att) {
+  baseAttack = att;
+}
+
+void Minion::setDefence(int def) {
+  baseDefence = def;
+}

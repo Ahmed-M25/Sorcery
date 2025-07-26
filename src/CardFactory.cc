@@ -4,6 +4,9 @@
 #include "../include/Ritual.h"
 #include "../include/Unsummon.h"
 #include "../include/Banish.h"
+#include "../include/Blizzard.h"
+#include "../include/RaiseDead.h"
+#include "../include/Recharge.h"
 #include <iostream>
 #include <unordered_map>
 #include <functional>
@@ -25,19 +28,20 @@ std::unique_ptr<Card> CardFactory::createCard(const std::string& name) {
     {"Master Summoner", []() { return std::make_unique<Minion>("Master Summoner", 3, 2, 3, "Summon up to three 1/1 air elementals."); }},
 
     // Spells
-    // {"Blizzard", []() { return std::make_unique<Spell>("Blizzard", 3, "Deal 2 damage to all minions."); }},
-    // {"Raise Dead", []() { return std::make_unique<Spell>("Raise Dead", 1, "Resurrect the top minion in your graveyard and set its defence to 1."); }},
     // {"Disenchant", []() { return std::make_unique<Spell>("Disenchant", 1, "Destroy the top enchantment on target minion."); }},
     // {"Recharge", []() { return std::make_unique<Spell>("Recharge", 1, "Your ritual gains 3 charges."); }},
     {"Unsummon", []() { return std::make_unique<Unsummon>("Unsummon", 1, "Return target minion to its owner's hand."); }},
     {"Banish", []() { return std::make_unique<Banish>("Banish", 2, "Destroy target minion or ritual."); }},
+    {"Blizzard", []() { return std::make_unique<Blizzard>("Blizzard", 3, "Deal 2 damage to all minions."); }},
+    {"Raise Dead", []() { return std::make_unique<RaiseDead>("Raise Dead", 1, "Resurrect the top minion in your graveyard and set its defence to 1."); }},
+    {"Recharge", []() { return std::make_unique<Recharge>("Recharge", 1, "Your ritual gains 3 charges."); }},
 
 
     
     // Enhancements
 
     // Rituals
-    {"Aura of Power", []() { return std::make_unique<Ritual>("Aura of Power", 1, "Whenever a minion enters play under your contol, it gains +1/+1", 4, 1); }},
+    {"Aura of Power", []() { return std::make_unique<Ritual>("Aura of Power", 1, "Whenever a minion enters play under your control, it gains +1/+1", 4, 1); }},
     {"Standstill", []() { return std::make_unique<Ritual>("Standstill", 3, "Whenever a minion enters play, destroy it", 4, 2); }},
     {"Dark Ritual", []() { return std::make_unique<Ritual>("Dark Ritual", 0, "At the start of your turn, gain 1 mana", 5, 1); }}, 
   };

@@ -13,7 +13,48 @@ Ritual::Ritual(const std::string& name, int cost, const std::string& desc, int i
 Ritual::~Ritual() = default;
 
 void Ritual::play(Target target, Game* game) {
-  std::cout << "[Debug] Ritual::play() called for " << name << std::endl;
+  Player* owner = this->getOwner();
+  if (!owner) {
+    std::cout << "Error: Ritual has no owner!" << std::endl;
+    return;
+  }
+
+  // Remove existing ritual if player has one
+  if (owner->getRitual()) {
+    // Unregister old ritual's trigger
+    if (owner->getRitual()->getTriggerObserver()) {
+      game->getTriggerManager().unregisterObserver(owner->getRitual()->getTriggerObserver());
+      std::cout << owner->getName() << "'s " << owner->getRitual()->getName() 
+                << " is replaced by " << name << "." << std::endl;
+    }
+  } else {
+    std::cout << owner->getName() << " plays " << name << " with " 
+              << charges << " charges." << std::endl;
+  }
+
+  // Set this ritual as the player's active ritual  
+  owner->setRitual(std::unique_ptr<Ritual>(this));
+
+  // Setup the ritual's trigger
+  owner->getRitual()->setupTrigger(owner);
+
+  // Register trigger with TriggerManager
+  if (owner->getRitual()->getTriggerObserver()) {
+    // We need to create a separate trigger instance for the TriggerManager
+    std::unique_ptr<TriggerObserver> globalTrigger;
+    
+    if (name == "Dark Ritual") {
+      globalTrigger = std::make_unique<DarkRitualTrigger>(owner->getRitual());
+    } else if (name == "Aura of Power") {
+      globalTrigger = std::make_unique<AuraPowerTrigger>(owner->getRitual());
+    } else if (name == "Standstill") {
+      globalTrigger = std::make_unique<StandstillTrigger>(owner->getRitual());
+    }
+    
+    if (globalTrigger) {
+      game->getTriggerManager().registerObserver(std::move(globalTrigger));
+    }
+  }
 }
 
 std::unique_ptr<Card> Ritual::clone() const {
@@ -36,6 +77,10 @@ bool Ritual::canActivate() const {
 
 void Ritual::useCharges(int amount) {
   charges = std::max(0, charges - amount);
+}
+
+void Ritual::addCharges(int amount) {
+  charges += amount;
 }
 
 void Ritual::setupTrigger(Player* owner) {

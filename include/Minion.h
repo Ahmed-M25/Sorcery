@@ -26,14 +26,18 @@ public:
   virtual void attackPlayer(Player* target, Game* game);
   virtual void attackMinion(Minion* target, Game* game);
   virtual void takeDamage(int damage, Game* game);
-  void die(Game* game);
+  virtual void die(Game* game);
   void restoreActions();
   bool hasActions() const;
   void useAction();
 
   // Getters
-  virtual int getAttack() const;
-  virtual int getDefence() const;
+  int getAttack() const;
+  int getDefence() const;
+
+  // Setters
+  void setAttack(int att);
+  void setDefence(int def);
 };
 
 #endif

@@ -12,6 +12,7 @@ class Game;
 class TriggerManager {
 private:
     std::vector<std::unique_ptr<TriggerObserver>> allObservers;
+    Minion* currentEnteringMinion = nullptr;
 
 public:
     TriggerManager();
@@ -23,6 +24,8 @@ public:
     void notifyEndOfTurn(Player* player, Game* game);
     void notifyMinionEnters(Minion* minion, Game* game);
     void notifyMinionLeaves(Minion* minion, Game* game);
+
+    Minion* getCurrentEnteringMinion() const { return currentEnteringMinion; }
 
     // Apply all observers in APNAP order for a given event
     void processInAPNAPOrder(const std::string& event, Game* game);

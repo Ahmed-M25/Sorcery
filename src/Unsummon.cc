@@ -21,14 +21,20 @@ void Unsummon::play(Target target, Game* game) {
 
   int pos = target.getPosition();
 
-  //remove minion from board
-  std::unique_ptr<Minion> minion = owner->getBoard().removeMinion(pos);
-  if (!minion) {
+  // Get minion to trigger event
+  Minion* minionPtr = owner->getBoard().getMinion(pos);
+  if (!minionPtr) {
     std::cout << "No minion at that position.\n";
     return;
   }
 
-  // return it to the owner’s hand
+  // Notify that minion is leaving play BEFORE removing it
+  game->getTriggerManager().notifyMinionLeaves(minionPtr, game);
+
+  // Remove minion from board
+  std::unique_ptr<Minion> minion = owner->getBoard().removeMinion(pos);
+
+  // Return it to the owner’s hand
   owner->getHand().addCard(std::move(minion));
   std::cout << "Unsummon returns "  << owner->getHand().getCard(owner->getHand().size() - 1)->getName() << " to " << owner->getName() << "'s hand.\n";
 }

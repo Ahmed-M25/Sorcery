@@ -17,6 +17,7 @@ public:
   
   void execute(Game* game) override;
   void execute(Game* game, Minion* enteringMinion);
+  Ritual* getRitual() const override { return ritual; }
   std::unique_ptr<TriggeredAbility> clone() const override;
 };
 
