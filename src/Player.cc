@@ -16,6 +16,7 @@ const std::string& Player::getName() const {
 void Player::drawCard() {
   if (hand.isFull()) {
     std::cout << name << "'s hand is full, cannot draw." << std::endl;
+    return;
   }
 
   auto card = deck.drawCard();

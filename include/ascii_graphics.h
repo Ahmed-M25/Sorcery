@@ -1,10 +1,10 @@
 #include <vector>
 #include <string>
 
-//SIMPLE_GRAPHICS = 0 displays a fancy style.
-//SIMPLE_GRAPHICS = 1 displays the style shown in the project specification's examples
-//You are encouraged to use SIMPLE_GRAPHICS = 0, but some terminals may not like it.
-#define SIMPLE_GRAPHICS 0
+// SIMPLE_GRAPHICS = 0 displays a fancy style.
+// SIMPLE_GRAPHICS = 1 displays the style shown in the project specification's examples
+// You are encouraged to use SIMPLE_GRAPHICS = 0, but some terminals may not like it.
+#define SIMPLE_GRAPHICS 1
 
 typedef std::vector<std::string> card_template_t;
 
