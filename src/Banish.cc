@@ -11,6 +11,8 @@ std::unique_ptr<Card> Banish::clone() const {
   return std::make_unique<Banish>(getName(), getCost(), getDescription());
 }
 
+
+
 void Banish::play(Target target, Game* game) {
   if (!target.isValidTarget(game)) {
     std::cout << "Invalid target for Banish.\n";

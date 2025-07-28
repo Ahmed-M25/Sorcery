@@ -12,9 +12,7 @@ std::unique_ptr<Card> Enrage::clone() const {
   return std::make_unique<Enrage>(*this);
 }
 
-EnchantmentDecorator* Enrage::createDecorator(Minion* target) const {
-  return new EnrageDecorator(target);
-}
+
 
 void Enrage::play(Target target, Game* game) {
     if (!target.isValidTarget(game) || target.Ritual() || target.targetsPlayer()) {
@@ -31,17 +29,23 @@ void Enrage::play(Target target, Game* game) {
     }
 
     std::cout << "Enrage gives " << minion->getName() << " *2/*2.\n";
-    EnchantmentDecorator* deco = createDecorator(minion);
-    owner->getBoard().replaceMinion(idx, std::unique_ptr<Minion>(deco));
+    minion->addEnchantment(std::make_unique<EnrageDecorator>());
 }
 
-EnrageDecorator::EnrageDecorator(Minion* minion)
-  : EnchantmentDecorator(minion) {}
+EnrageDecorator::EnrageDecorator() {}
 
-int EnrageDecorator::getAttack() const {
+int EnrageDecorator::getModifiedAttack(int baseAttack) const {
   return baseAttack * 2;
 }
 
-int EnrageDecorator::getDefence() const {
+int EnrageDecorator::getModifiedDefence(int baseDefence) const {
   return baseDefence * 2;
+}
+
+std::string EnrageDecorator::getName() const {
+  return "Enrage";
+}
+
+int EnrageDecorator::getModifiedActions(int baseActions) const {
+  return baseActions;
 }

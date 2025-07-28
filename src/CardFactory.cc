@@ -9,6 +9,7 @@
 #include "../include/Recharge.h"
 #include "../include/GiantStrength.h"
 #include "../include/Enrage.h"
+#include "../include/Disenchant.h"
 #include <iostream>
 #include <unordered_map>
 #include <functional>
@@ -30,12 +31,12 @@ std::unique_ptr<Card> CardFactory::createCard(const std::string& name) {
     {"Master Summoner", []() { return std::make_unique<Minion>("Master Summoner", 3, 2, 3, "Summon up to three 1/1 air elementals."); }},
 
     // Spells
-    // {"Disenchant", []() { return std::make_unique<Spell>("Disenchant", 1, "Destroy the top enchantment on target minion."); }},
     {"Unsummon", []() { return std::make_unique<Unsummon>("Unsummon", 1, "Return target minion to its owner's hand."); }},
     {"Banish", []() { return std::make_unique<Banish>("Banish", 2, "Destroy target minion or ritual."); }},
     {"Blizzard", []() { return std::make_unique<Blizzard>("Blizzard", 3, "Deal 2 damage to all minions."); }},
     {"Raise Dead", []() { return std::make_unique<RaiseDead>("Raise Dead", 1, "Resurrect the top minion in your graveyard and set its defence to 1."); }},
     {"Recharge", []() { return std::make_unique<Recharge>("Recharge", 1, "Your ritual gains 3 charges."); }},
+    {"Disenchant", []() { return std::make_unique<Disenchant>("Disenchant", 1, "Destroy the top enchantment on target minion."); }},
 
 
     

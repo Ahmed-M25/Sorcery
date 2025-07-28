@@ -6,22 +6,23 @@
 #include <vector>
 #include <memory>
 
+
 class Game;
 class Player;
+class EnchantmentDecorator;
 
 class Minion : public Card {
 protected:
   int baseAttack;
   int baseDefence;
   int currentActions;
-  // TODO: Add ability vectors in later steps
+  std::unique_ptr<class EnchantmentList> enchantments;
 
 public:
   Minion(const std::string& name, int cost, int att, int def, const std::string& desc);
-  ~Minion() = default;
+  ~Minion();
   Minion(const Minion&) = delete;
   Minion& operator=(const Minion&) = delete;
-
 
   virtual void play(Target target, Game* game) override;
   std::unique_ptr<Card> clone() const override;
@@ -43,7 +44,13 @@ public:
   // Setters
   void setAttack(int att);
   void setDefence(int def);
+  void setActions(int act)
 
+  // Enchantment management
+  void addEnchantment(std::unique_ptr<EnchantmentDecorator> enchantment);
+  void removeTopEnchantment();
+  bool hasEnchantments() const;
+  const std::vector<std::unique_ptr<EnchantmentDecorator>>& getEnchantments() const;
 };
 
 #endif

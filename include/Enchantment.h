@@ -15,8 +15,7 @@ public:
     void play(Target target, Game* game) override;
     std::unique_ptr<Card> clone() const override;
     std::string getType() const override;
-
-    virtual EnchantmentDecorator* createDecorator(Minion* target) const = 0;
+    bool requiresTarget() const override;
 };
 
 #endif 

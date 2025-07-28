@@ -67,6 +67,8 @@ std::string Ritual::getType() const {
   return "Ritual";
 }
 
+
+
 void Ritual::trigger(Game* game) {
   std::cout << "[Ritual] " << name << " triggered, " << charges << " charges remaining." << std::endl;
 }

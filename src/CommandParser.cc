@@ -32,42 +32,54 @@ void CommandParser::execute(const std::string&command, Game* game) {
     game->displayBoard();
   }
   else if (cmd == "play") {
-    if(tokens.size() >= 4){
-      try {
-            int cardIndex = std::stoi(tokens[1]);
-            int playerNum = std::stoi(tokens[2]);
-            
-            Target target;
-            
-            if (tokens[3] == "r") {
-                // Targeting ritual
-                target = Target(playerNum, 0, true);
-            } else {
-                // Targeting minion
-                int targetPosition = std::stoi(tokens[3]);
-                target = Target(playerNum, targetPosition - 1, false); 
-            }
-            
-            activePlayer->playCard(cardIndex, target, game);
-            
-        } catch (const std::exception& e) {
-            std::cout << "Invalid play command format!" << std::endl;
-        }
-    }
-    else if(tokens.size() >= 2){
-      try {
-        int cardIndex = std::stoi(tokens[1]);
-        Target target;
-        activePlayer->playCard(cardIndex, target, game);
-      }
-      catch (const std::exception& e) {
-        std::cout << "Invlaid card number!" << std::endl;
-      }
-    }
-    else {
-        std::cout << "Invalid play command. Use: play i or play i p t" << std::endl;
+    if (tokens.size() < 2) {
+      std::cout << "Invalid play command. Use: play i or play i p t" << std::endl;
+      return;
     }
 
+    try {
+      int cardIndex = std::stoi(tokens[1]);
+      Card* card = activePlayer->getHand().getCard(cardIndex - 1);
+      
+      if (!card) {
+        std::cout << "Invalid card index!" << std::endl;
+        return;
+      }
+
+      // Check if card requires targeting
+      if (card->requiresTarget()) {
+        // Card requires targeting - need 4 tokens: play i p t
+        if (tokens.size() < 4) {
+          std::cout << card->getName() << " requires a target. Use: play " << cardIndex << " p t" << std::endl;
+          return;
+        }
+
+        int playerNum = std::stoi(tokens[2]);
+        Target target;
+        
+        if (tokens[3] == "r") {
+          // Targeting ritual
+          target = Target(playerNum, 0, true);
+        } else {
+          // Targeting minion
+          int targetPosition = std::stoi(tokens[3]);
+          target = Target(playerNum, targetPosition - 1, false); 
+        }
+        
+        activePlayer->playCard(cardIndex, target, game);
+      } else {
+        // Card doesn't require targeting - use 2 tokens: play i
+        if (tokens.size() > 2) {
+          std::cout << card->getName() << " doesn't require a target. Use: play " << cardIndex << std::endl;
+          return;
+        }
+
+        Target target; // Empty target
+        activePlayer->playCard(cardIndex, target, game);
+      }
+    } catch (const std::exception& e) {
+      std::cout << "Invalid play command format!" << std::endl;
+    }
   }
   else if (cmd == "attack") {
     // Attacking player

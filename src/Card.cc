@@ -6,3 +6,5 @@ Card::Card(const std::string& name, int cost, const std::string& desc) : name{na
 void Card::setOwner(Player* player) {
   owner = player;
 }
+
+

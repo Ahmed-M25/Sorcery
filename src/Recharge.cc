@@ -12,6 +12,10 @@ std::unique_ptr<Card> Recharge::clone() const {
   return std::make_unique<Recharge>(getName(), getCost(), getDescription());
 }
 
+bool Recharge::requiresTarget() const {
+  return false; // Recharge affects your own ritual, no targeting required
+}
+
 void Recharge::play(Target, Game* game) {
   Player* me = game->getActivePlayer();
   Ritual* r = me->getRitual();
