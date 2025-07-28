@@ -10,6 +10,8 @@
 class Game;
 class Player;
 class EnchantmentDecorator;
+class AbilityCommand;
+class TriggeredAbility;
 
 class Minion : public Card {
 protected:
@@ -17,6 +19,8 @@ protected:
   int baseDefence;
   int currentActions;
   std::unique_ptr<class EnchantmentList> enchantments;
+  std::unique_ptr<TriggeredAbility> triggeredAbility;
+  std::unique_ptr<AbilityCommand> activatedAbility;
 
 public:
   Minion(const std::string& name, int cost, int att, int def, const std::string& desc);
@@ -36,6 +40,19 @@ public:
   void restoreActions();
   bool hasActions() const;
   void useAction();
+
+  // Triggered ability management  
+  void setTriggeredAbility(std::unique_ptr<TriggeredAbility> ability);
+  bool hasTriggeredAbility() const;
+  TriggeredAbility* getTriggeredAbility() const;
+  const std::string& getTriggeredDescription() const;
+
+  // Activated ability management
+  void setActivatedAbility(std::unique_ptr<AbilityCommand> ability);
+  void useAbility(Target target, Game* game);
+  bool hasActivatedAbility() const;
+  int getAbilityCost(int abilityIndex) const;
+  const std::string& getAbilityDescription(int abilityIndex) const;
 
   // Getters
   virtual int getAttack() const;

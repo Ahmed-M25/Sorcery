@@ -145,6 +145,75 @@ void CommandParser::execute(const std::string&command, Game* game) {
       }
     }
   }
+  else if (cmd == "use") {
+      // Use minion target-player target-card
+    if (tokens.size() >= 4) {
+      try {
+        int minionIndex = std::stoi(tokens[1]);
+        int playerNum = std::stoi(tokens[2]);
+
+        Target target;
+
+        // Targeting ritual
+        if (tokens[3] == "r") {
+          target = Target(playerNum, 0, true);
+        }
+        // Targeting minion
+        else {
+          int targetPosition = std::stoi(tokens[3]);
+          target = Target(playerNum, targetPosition - 1, false);
+        }
+
+        // Get minion from active player's board
+        Player* activePlayer = game->getActivePlayer();
+        Minion* minion = activePlayer->getBoard().getMinion(minionIndex - 1); // Convert to 0-indexed
+
+        if (!minion) {
+          std::cout << "No minion at position " << minionIndex << std::endl;
+          return;
+        }
+
+        if (!minion->hasActivatedAbility()) {
+          std::cout << minion->getName() << " has no activated ability!" << std::endl;
+          return;
+        }
+
+        minion->useAbility(target, game);
+      }
+      catch (const std::exception& e) {
+        std::cout << "Invalid use command format!" << std::endl;
+      }
+    }
+    // Use minion (no target)
+    else if (tokens.size() == 2) {
+      try {
+        int minionIndex = std::stoi(tokens[1]);
+
+        Player* activePlayer = game->getActivePlayer();
+        Minion* minion = activePlayer->getBoard().getMinion(minionIndex - 1);
+
+        if (!minion) {
+          std::cout << "No minion at position " << minionIndex << std::endl;
+          return;
+        }
+
+        if (!minion->hasActivatedAbility()) {
+          std::cout << minion->getName() << " has no activated ability!" << std::endl;
+          return;
+        }
+
+        Target noTarget;
+        minion->useAbility(noTarget, game);
+      }
+      catch (const std::exception& e) {
+        std::cout << "Invalid minion number!" << std::endl;
+      }
+    }
+    else {
+      std::cout << "Invalid use command format!" << std::endl;
+      std::cout << "Usage: use minion [target-player target-card]" << std::endl;
+    }
+  }
   else if (cmd == "end") {
     game->nextTurn();
   }

@@ -1,5 +1,6 @@
 #include "../include/TriggerManager.h"
 #include "../include/TriggerObserver.h"
+#include "../include/TriggeredAbility.h"
 #include "../include/Game.h"
 #include "../include/Player.h"
 #include "../include/Minion.h"
@@ -29,8 +30,13 @@ void TriggerManager::processInAPNAPOrder(const std::string& event, Game* game) {
   // Active player's minions (left to right)
   std::vector<Minion*> activeMinions = activePlayer->getBoard().getMinions();
   for (Minion* minion : activeMinions) {
-    // TODO: Process minion triggers when minion triggers are implemented
-  }
+    if (minion->hasTriggeredAbility()) {
+      TriggeredAbility* trigger = minion->getTriggeredAbility();
+      if (trigger && trigger->matchesTrigger(event)) {
+        trigger->notify(event, game);
+      }
+    }
+  } 
   
   // Active player's ritual
   for (const auto& observer : allObservers) {
@@ -45,7 +51,12 @@ void TriggerManager::processInAPNAPOrder(const std::string& event, Game* game) {
   // Inactive player's minions (left to right)  
   std::vector<Minion*> inactiveMinions = inactivePlayer->getBoard().getMinions();
   for (Minion* minion : inactiveMinions) {
-    // TODO: Process minion triggers when minion triggers are implemented
+    if (minion and minion->hasTriggeredAbility()) {
+      TriggeredAbility* trigger = minion->getTriggeredAbility();
+      if (trigger->matchesTrigger(event)) {
+        trigger->notify(event, game);
+      }
+    }
   }
   
   // Inactive player's ritual
