@@ -143,13 +143,20 @@ void Minion::useAbility(Target target, Game* game) {
 
   int modifiedCost = getAbilityCost(0);
   if (!owner->canAfford(modifiedCost)) {
-    std::cout << "Not enough magic to use " << activatedAbility->getDescription() << " (costs " << modifiedCost << ")" << std::endl;
-    return;
+    if (game->isTestingMode()) {
+      std::cout << "Testing mode: Using " << activatedAbility->getDescription() << " without enough magic." << std::endl;
+      owner->setMagic(0); // Set magic to 0 in testing mode
+    }
+    else {
+      std::cout << "Not enough magic to use " << activatedAbility->getDescription() << " (costs " << modifiedCost << ")" << std::endl;
+      return;
+    }
+  }
+  else {
+    owner->payMagic(modifiedCost);
   }
 
-  // Use action and pay magic
   useAction();
-  owner->payMagic(modifiedCost);
 
   activatedAbility->execute(target, game);
 

@@ -28,7 +28,7 @@ public:
   // Basic functionality
   void setOwner(Player* player);
 
-  // Getters (for debugging/display only)
+  // Getters
   const std::string& getName() const { return name; }
   int getCost() const { return cost; }
   const std::string& getDescription() const { return description; }

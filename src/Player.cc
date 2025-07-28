@@ -29,6 +29,20 @@ void Player::drawCard() {
   }
 }
 
+// For testing mode
+void Player::drawCard(Game* game) {
+  if (game->isTestingMode()) {
+    auto card = deck.drawCard();
+    if (card) {
+      hand.addCard(std::move(card));
+      std::cout << name << " draws a card." << std::endl;
+    }
+    else {
+      std::cout << name << "'s deck is empty, cannot draw." << std::endl;
+    }
+  }
+}
+
 void Player::loadDeck(const std::string& filename) {
   std::cout << name << " loading deck from " << filename << std::endl;
   deck.loadFromFile(filename);
@@ -50,8 +64,17 @@ void Player::playCard(int index, Target target, Game* game) {
   }
 
   if (!canAfford(card->getCost())) {
-    std::cout << "Not enough magic to play " << card->getName() << "!" << std::endl;
-    return;
+    if (game->isTestingMode()) {
+      std::cout << "Testing mode: Playing " << card->getName() << " without enough magic." << std::endl;
+      setMagic(0); // Set magic to 0 in testing mode
+    }
+    else {
+      std::cout << "Not enough magic to play " << card->getName() << "!" << std::endl;
+      return;
+    }
+  }
+  else {
+    payMagic(card->getCost());
   }
 
   // Minions
@@ -78,14 +101,11 @@ void Player::playCard(int index, Target target, Game* game) {
     
     // Notify TriggerManager that a minion entered play
     game->getTriggerManager().notifyMinionEnters(minionPtr, game);
-
-    payMagic(card->getCost());
   }
   // Spells
   else if (card->getType() == "Spell") {
     std::unique_ptr<Card> playedCard = hand.removeCard(cardIndex);
     playedCard->play(target, game);
-    payMagic(card->getCost());
     // hand.removeCard(cardIndex); // Spell is consumed
   }
   // Rituals
@@ -98,25 +118,18 @@ void Player::playCard(int index, Target target, Game* game) {
       return;
     }
     
-    if (!canAfford(ritual->getCost())) {
-      std::cout << "Not enough magic to play " << ritual->getName() << std::endl;
-      hand.addCard(std::move(playedCard)); // Put it back
-      return;
-    }
-    
     ritual->setOwner(this);
     ritual->play(target, game);
-    payMagic(ritual->getCost());
     
     // playedCard is now owned by the player's ritual slot, don't delete it
     playedCard.release();
   }
+  // Enchantments
   else if (card->getType() == "Enchantment") {
     std::unique_ptr<Card> playedCard = hand.removeCard(cardIndex);
     playedCard->play(target, game);
-    payMagic(card->getCost());
     // hand.removeCard(cardIndex); // Enchantment is consumed
-}
+  }
 }
 
 void Player::takeDamage(int damage) {
@@ -158,4 +171,8 @@ bool Player::canAfford(int cost) const {
 
 void Player::payMagic(int cost) {
   magic -= cost;
+}
+
+void Player::setMagic(int amount) { 
+  magic = amount; 
 }
