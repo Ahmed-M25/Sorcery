@@ -4,6 +4,8 @@
 #include "../include/Minion.h"
 #include "../include/Ritual.h"
 #include "../include/Spell.h"
+#include "../include/EnchantmentDecorator.h"
+#include "../include/CardFactory.h"
 #include "../include/ascii_graphics.h"
 #include <iostream>
 #include <iomanip>
@@ -97,6 +99,32 @@ void GameDisplay::displayMinion(Minion* minion) {
   
   // TODO: Add enchantment display when enchantments are implemented
   std::cout << std::endl;
+}
+
+void GameDisplay::displayEnchantments(Minion* minion) {
+  if (!minion || !minion->hasEnchantments()) {
+    return;
+  }
+
+  const auto& enchantments = minion->getEnchantments();
+  
+  for (size_t i = 0; i < enchantments.size(); i += 5) {
+    std::vector<card_template_t> enchantmentCards;
+    
+    for (size_t j = 0; j < 5 && (i + j) < enchantments.size(); j++) {
+      std::string name = enchantments[i + j]->getName();
+      auto enchantmentCard = CardFactory::createCard(name);
+      
+      if (enchantmentCard) {
+        enchantmentCards.push_back(getCardTemplate(enchantmentCard.get()));
+      } else {
+        // Fallback for unknown enchantments
+        enchantmentCards.push_back(CARD_TEMPLATE_EMPTY);
+      }
+    }
+    
+    displayCardsHorizontally(enchantmentCards);
+  }
 }
 
 void GameDisplay::displayHelp() {

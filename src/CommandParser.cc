@@ -214,6 +214,32 @@ void CommandParser::execute(const std::string&command, Game* game) {
       std::cout << "Usage: use minion [target-player target-card]" << std::endl;
     }
   }
+  else if (cmd == "inspect") {
+    if (tokens.size() < 2) {
+      std::cout << "Invalid inspect command. Use: inspect i" << std::endl;
+      return;
+    }
+
+    try {
+      int minionIndex = std::stoi(tokens[1]);
+      Player* activePlayer = game->getActivePlayer();
+      Minion* minion = activePlayer->getBoard().getMinion(minionIndex - 1); // Convert to 0-indexed
+
+      if (!minion) {
+        std::cout << "No minion at position " << minionIndex << std::endl;
+        return;
+      }
+
+      // Display the minion card
+      GameDisplay::displayCard(minion);
+      
+      // Display enchantments
+      GameDisplay::displayEnchantments(minion);
+    }
+    catch (const std::exception& e) {
+      std::cout << "Invalid minion number!" << std::endl;
+    }
+  }
   else if (cmd == "end") {
     game->nextTurn();
   }

@@ -15,6 +15,7 @@ public:
   static void displayHand(Player* player);
   static void displayCard(Card* card);
   static void displayMinion(Minion* minion);
+  static void displayEnchantments(Minion* minion);
   static void displayHelp();
   static void displayGameOver(const std::string& reason);
   static std::string cardToString(Card* card);
