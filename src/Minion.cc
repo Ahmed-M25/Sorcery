@@ -11,8 +11,6 @@ Minion::Minion(const std::string& name, int cost, int att, int def, const std::s
 
 Minion::~Minion() = default;
 
-Minion::~Minion() = default;
-
 void Minion::play(Target target, Game* game) {
   std::cout << "Playing minion: " << name << " (" << baseAttack << "/" << baseDefence << ")" << std::endl;
   // TODO: Add to board in later steps
@@ -87,7 +85,11 @@ void Minion::die(Game* game) {
 }
 
 void Minion::restoreActions() {
-  currentActions = 1;
+  int baseActions = 1;
+  for (const auto& enchantment : enchantments->getEnchantments()) {
+    baseActions = enchantment->getModifiedActions(baseActions);
+  }
+  currentActions = baseActions;
 }
 
 bool Minion::hasActions() const {
@@ -129,19 +131,25 @@ void Minion::useAbility(Target target, Game* game) {
     return;
   }
 
+  if (isAbilitySilenced()) {
+    std::cout << name << "'s abilities are silenced!" << std::endl;
+    return;
+  }
+
   if (!hasActions()) {
     std::cout << name << " has no actions remaining!" << std::endl;
     return;
   }
 
-  if (!owner->canAfford(activatedAbility->getCost())) {
-    std::cout << "Not enough magic to use " << activatedAbility->getDescription() << std::endl;
+  int modifiedCost = getAbilityCost(0);
+  if (!owner->canAfford(modifiedCost)) {
+    std::cout << "Not enough magic to use " << activatedAbility->getDescription() << " (costs " << modifiedCost << ")" << std::endl;
     return;
   }
 
   // Use action and pay magic
   useAction();
-  owner->payMagic(activatedAbility->getCost());
+  owner->payMagic(modifiedCost);
 
   activatedAbility->execute(target, game);
 
@@ -153,7 +161,22 @@ bool Minion::hasActivatedAbility() const {
 }
 
 int Minion::getAbilityCost(int abilityIndex) const {
-  return activatedAbility ? activatedAbility->getCost() : 0;
+  if (!activatedAbility) return 0;
+  
+  int baseCost = activatedAbility->getCost();
+  for (const auto& enchantment : enchantments->getEnchantments()) {
+    baseCost = enchantment->getModifiedAbilityCost(baseCost);
+  }
+  return baseCost;
+}
+
+bool Minion::isAbilitySilenced() const {
+  for (const auto& enchantment : enchantments->getEnchantments()) {
+    if (enchantment->isAbilitySilenced()) {
+      return true;
+    }
+  }
+  return false;
 }
 
 const std::string& Minion::getAbilityDescription(int abilityIndex) const {

@@ -49,3 +49,11 @@ std::string EnrageDecorator::getName() const {
 int EnrageDecorator::getModifiedActions(int baseActions) const {
   return baseActions;
 }
+
+int EnrageDecorator::getModifiedAbilityCost(int baseCost) const {
+  return baseCost; // Enrage doesn't modify ability costs
+}
+
+bool EnrageDecorator::isAbilitySilenced() const {
+  return false; // Enrage doesn't silence abilities
+}

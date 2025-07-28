@@ -17,6 +17,8 @@ public:
   int getModifiedAttack(int baseAttack) const override;
   int getModifiedDefence(int baseDefence) const override;
   int getModifiedActions(int baseActions) const override;
+  int getModifiedAbilityCost(int baseCost) const override;
+  bool isAbilitySilenced() const override;
   std::string getName() const override;
 };
 

@@ -1,19 +1,19 @@
-#ifndef HASTE_H
-#define HASTE_H
+#ifndef SILENCE_H
+#define SILENCE_H
 
 #include "Enchantment.h"
 #include "EnchantmentDecorator.h"
 
-class Haste : public Enchantment {
+class Silence : public Enchantment {
 public:
-  Haste();
+  Silence();
   std::unique_ptr<Card> clone() const override;
   void play(Target target, Game* game) override;
 };
 
-class HasteDecorator : public EnchantmentDecorator {
+class SilenceDecorator : public EnchantmentDecorator {
 public:
-  HasteDecorator();
+  SilenceDecorator();
   int getModifiedAttack(int baseAttack) const override;
   int getModifiedDefence(int baseDefence) const override;
   int getModifiedActions(int baseActions) const override;

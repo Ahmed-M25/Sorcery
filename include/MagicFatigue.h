@@ -1,19 +1,19 @@
-#ifndef HASTE_H
-#define HASTE_H
+#ifndef MAGIC_FATIGUE_H
+#define MAGIC_FATIGUE_H
 
 #include "Enchantment.h"
 #include "EnchantmentDecorator.h"
 
-class Haste : public Enchantment {
+class MagicFatigue : public Enchantment {
 public:
-  Haste();
+  MagicFatigue();
   std::unique_ptr<Card> clone() const override;
   void play(Target target, Game* game) override;
 };
 
-class HasteDecorator : public EnchantmentDecorator {
+class MagicFatigueDecorator : public EnchantmentDecorator {
 public:
-  HasteDecorator();
+  MagicFatigueDecorator();
   int getModifiedAttack(int baseAttack) const override;
   int getModifiedDefence(int baseDefence) const override;
   int getModifiedActions(int baseActions) const override;

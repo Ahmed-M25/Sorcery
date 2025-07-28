@@ -11,6 +11,9 @@
 #include "../include/Recharge.h"
 #include "../include/GiantStrength.h"
 #include "../include/Enrage.h"
+#include "../include/Haste.h"
+#include "../include/MagicFatigue.h"
+#include "../include/Silence.h"
 #include "../include/Disenchant.h"
 #include "../include/BoneGolemTrigger.h"
 #include "../include/FireElementalTrigger.h"
@@ -155,6 +158,9 @@ std::unique_ptr<Card> CardFactory::createCard(const std::string& name) {
     // Enhancements
     {"Giant Strength", []() { return std::make_unique<GiantStrength>(); }},
     {"Enrage", []() { return std::make_unique<Enrage>(); }},
+    {"Haste", []() { return std::make_unique<Haste>(); }},
+    {"Magic Fatigue", []() { return std::make_unique<MagicFatigue>(); }},
+    {"Silence", []() { return std::make_unique<Silence>(); }},
 
     // Rituals
     {"Aura of Power", []() { return std::make_unique<Ritual>("Aura of Power", 1, "Whenever a minion enters play under your control, it gains +1/+1", 4, 1); }},

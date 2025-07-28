@@ -30,7 +30,7 @@ void TriggerManager::processInAPNAPOrder(const std::string& event, Game* game) {
   // Active player's minions (left to right)
   std::vector<Minion*> activeMinions = activePlayer->getBoard().getMinions();
   for (Minion* minion : activeMinions) {
-    if (minion->hasTriggeredAbility()) {
+    if (minion->hasTriggeredAbility() && !minion->isAbilitySilenced()) {
       TriggeredAbility* trigger = minion->getTriggeredAbility();
       if (trigger && trigger->matchesTrigger(event)) {
         trigger->notify(event, game);
@@ -51,7 +51,7 @@ void TriggerManager::processInAPNAPOrder(const std::string& event, Game* game) {
   // Inactive player's minions (left to right)  
   std::vector<Minion*> inactiveMinions = inactivePlayer->getBoard().getMinions();
   for (Minion* minion : inactiveMinions) {
-    if (minion and minion->hasTriggeredAbility()) {
+    if (minion and minion->hasTriggeredAbility() && !minion->isAbilitySilenced()) {
       TriggeredAbility* trigger = minion->getTriggeredAbility();
       if (trigger->matchesTrigger(event)) {
         trigger->notify(event, game);

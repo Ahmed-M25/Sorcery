@@ -52,6 +52,7 @@ public:
   void useAbility(Target target, Game* game);
   bool hasActivatedAbility() const;
   int getAbilityCost(int abilityIndex) const;
+  bool isAbilitySilenced() const;
   const std::string& getAbilityDescription(int abilityIndex) const;
 
   // Getters
@@ -61,7 +62,7 @@ public:
   // Setters
   void setAttack(int att);
   void setDefence(int def);
-  void setActions(int act)
+  void setActions(int act);
 
   // Enchantment management
   void addEnchantment(std::unique_ptr<EnchantmentDecorator> enchantment);

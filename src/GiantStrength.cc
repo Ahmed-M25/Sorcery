@@ -49,3 +49,11 @@ std::string GiantStrengthDecorator::getName() const {
 int GiantStrengthDecorator::getModifiedActions(int baseActions) const {
   return baseActions;
 }
+
+int GiantStrengthDecorator::getModifiedAbilityCost(int baseCost) const {
+  return baseCost; // Giant Strength doesn't modify ability costs
+}
+
+bool GiantStrengthDecorator::isAbilitySilenced() const {
+  return false; // Giant Strength doesn't silence abilities
+}

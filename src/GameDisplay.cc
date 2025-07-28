@@ -113,15 +113,22 @@ card_template_t GameDisplay::getCardTemplate(Card* card) {
   
   if (type == "Minion") {
     Minion* minion = static_cast<Minion*>(card);
-    // Check if minion has abilities by looking at description
-    if (minion->getDescription().empty()) {
-      return display_minion_no_ability(minion->getName(), minion->getCost(), 
-                                      minion->getAttack(), minion->getDefence());
-    } 
-    else {
+    // Check if minion has activated ability first (and is not silenced)
+    if (minion->hasActivatedAbility() && !minion->isAbilitySilenced()) {
+      return display_minion_activated_ability(minion->getName(), minion->getCost(),
+                                            minion->getAttack(), minion->getDefence(),
+                                            minion->getAbilityCost(0), minion->getAbilityDescription(0));
+    }
+    // Check if minion has triggered ability (and is not silenced)
+    else if (minion->hasTriggeredAbility() && !minion->isAbilitySilenced()) {
       return display_minion_triggered_ability(minion->getName(), minion->getCost(),
                                             minion->getAttack(), minion->getDefence(),
-                                            minion->getDescription());
+                                            minion->getTriggeredDescription());
+    }
+    // No abilities or abilities are silenced
+    else {
+      return display_minion_no_ability(minion->getName(), minion->getCost(), 
+                                      minion->getAttack(), minion->getDefence());
     }
   }
   else if (type == "Ritual") {
