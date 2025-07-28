@@ -2,9 +2,12 @@
 #include "../include/Game.h"
 #include "../include/Player.h"
 #include "../include/EnchantmentDecorator.h"
+#include "../include/AbilityCommand.h"
 #include <iostream>
 
 Minion::Minion(const std::string& name, int cost, int att, int def, const std::string& desc) : Card{name, cost, desc}, baseAttack{att}, baseDefence{def}, currentActions{0} {}
+
+Minion::~Minion() = default;
 
 void Minion::play(Target target, Game* game) {
   std::cout << "Playing minion: " << name << " (" << baseAttack << "/" << baseDefence << ")" << std::endl;
@@ -12,7 +15,14 @@ void Minion::play(Target target, Game* game) {
 }
 
 std::unique_ptr<Card> Minion::clone() const {
-  return std::make_unique<Minion>(name, cost, baseAttack, baseDefence, description);
+  auto cloned = std::make_unique<Minion>(name, cost, baseAttack, baseDefence, description);
+  
+  // Clone the single activated ability
+  if (activatedAbility) {
+    cloned->setActivatedAbility(activatedAbility->clone());
+  }
+  
+  return cloned;
 }
 
 std::string Minion::getType() const {
@@ -77,6 +87,48 @@ void Minion::useAction() {
   if (currentActions > 0) {
     currentActions--;
   }
+}
+
+void Minion::setActivatedAbility(std::unique_ptr<AbilityCommand> ability) {
+  activatedAbility = std::move(ability);
+}
+
+void Minion::useAbility(Target target, Game* game) {
+  if (!activatedAbility) {
+    std::cout << name << " has no activated ability!" << std::endl;
+    return;
+  }
+
+  if (!hasActions()) {
+    std::cout << name << " has no actions remaining!" << std::endl;
+    return;
+  }
+
+  if (!owner->canAfford(activatedAbility->getCost())) {
+    std::cout << "Not enough magic to use " << activatedAbility->getDescription() << std::endl;
+    return;
+  }
+
+  // Use action and pay magic
+  useAction();
+  owner->payMagic(activatedAbility->getCost());
+
+  activatedAbility->execute(target, game);
+
+  std::cout << name << " uses " << activatedAbility->getDescription() << std::endl;
+}
+
+bool Minion::hasActivatedAbility() const {
+  return activatedAbility != nullptr;
+}
+
+int Minion::getAbilityCost(int abilityIndex) const {
+  return activatedAbility ? activatedAbility->getCost() : 0;
+}
+
+const std::string& Minion::getAbilityDescription(int abilityIndex) const {
+  static const std::string empty = "";
+  return activatedAbility ? activatedAbility->getDescription() : empty;
 }
 
 int Minion::getAttack() const {

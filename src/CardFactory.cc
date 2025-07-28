@@ -1,4 +1,6 @@
 #include "../include/CardFactory.h"
+#include "../include/Game.h"
+#include "../include/Player.h"
 #include "../include/Spell.h"
 #include "../include/Minion.h"
 #include "../include/Ritual.h"
@@ -9,6 +11,7 @@
 #include "../include/Recharge.h"
 #include "../include/GiantStrength.h"
 #include "../include/Enrage.h"
+#include "../include/ActivatedAbility.h"
 #include <iostream>
 #include <unordered_map>
 #include <functional>
@@ -25,9 +28,89 @@ std::unique_ptr<Card> CardFactory::createCard(const std::string& name) {
     {"Bone Golem", []() { return std::make_unique<Minion>("Bone Golem", 2, 1, 3, "Gain +1/+1 whenever a minion leaves play."); }},
     {"Fire Elemental", []() { return std::make_unique<Minion>("Fire Elemental", 2, 2, 2, "Whenever an opponent's minion enters play, deal 1 damage to it."); }},
     {"Potion Seller", []() { return std::make_unique<Minion>("Potion Seller", 2, 1, 3, "At the end of your turn, all your minions gain +0/+1."); }},
-    {"Novice Pyromancer", []() { return std::make_unique<Minion>("Novice Pyromancer", 1, 0, 1, "Deal 1 damage to target minion."); }},
-    {"Apprentice Summoner", []() { return std::make_unique<Minion>("Apprentice Summoner", 1, 1, 1, "Summon a 1/1 air elemental."); }},
-    {"Master Summoner", []() { return std::make_unique<Minion>("Master Summoner", 3, 2, 3, "Summon up to three 1/1 air elementals."); }},
+    
+    // Activated ability minions
+    {"Novice Pyromancer", []() { 
+      auto minion = std::make_unique<Minion>("Novice Pyromancer", 1, 0, 1, "Deal 1 damage to target minion.");
+      
+      auto ability = std::make_unique<ActivatedAbility>("Deal 1 damage to target minion", 1,
+        [](Target target, Game* game) {
+          if (!target.isValidTarget(game) || target.Ritual()) {
+            std::cout << "Invalid target for Novice Pyromancer ability." << std::endl;
+            return;
+          }
+          
+          Player* targetOwner = (target.getPlayerNum() == 1 ? game->getPlayer1() : game->getPlayer2());
+          Minion* targetMinion = targetOwner->getBoard().getMinion(target.getPosition());
+          
+          if (targetMinion) {
+            targetMinion->takeDamage(1, game);
+            std::cout << "Novice Pyromancer deals 1 damage to " << targetMinion->getName() << std::endl;
+          }
+        });
+      
+      minion->setActivatedAbility(std::move(ability));
+      return minion;
+    }},
+    {"Apprentice Summoner", []() {
+      auto minion = std::make_unique<Minion>("Apprentice Summoner", 1, 1, 1, "Summon a 1/1 air elemental.");
+      
+      auto ability = std::make_unique<ActivatedAbility>("Summon a 1/1 air elemental", 1,
+        [](Target target, Game* game) {
+          Player* owner = game->getActivePlayer();
+          
+          if (owner->getBoard().isFull()) {
+            std::cout << "Board is full! Cannot summon Air Elemental." << std::endl;
+            return;
+          }
+          
+          // Create and summon Air Elemental
+          auto airElemental = std::make_unique<Minion>("Air Elemental", 0, 1, 1, "");
+          airElemental->setOwner(owner);
+          
+          std::cout << "Apprentice Summoner summons an Air Elemental!" << std::endl;
+          Minion* minionPtr = airElemental.get();
+          owner->getBoard().addMinion(std::move(airElemental));
+          
+          // Trigger minion enters play
+          game->getTriggerManager().notifyMinionEnters(minionPtr, game);
+        });
+      
+      minion->setActivatedAbility(std::move(ability));
+      return minion;
+    }},
+    {"Master Summoner", []() {
+      auto minion = std::make_unique<Minion>("Master Summoner", 3, 2, 3, "Summon up to three 1/1 air elementals.");
+      
+      auto ability = std::make_unique<ActivatedAbility>("Summon up to three 1/1 air elementals", 2,
+        [](Target target, Game* game) {
+          Player* owner = game->getActivePlayer();
+          
+          int availableSlots = 5 - owner->getBoard().size();
+          int summonsToCreate = std::min(3, availableSlots);
+          
+          if (summonsToCreate == 0) {
+            std::cout << "Board is full! Cannot summon any Air Elementals." << std::endl;
+            return;
+          }
+          
+          std::cout << "Master Summoner summons " << summonsToCreate << " Air Elemental(s)!" << std::endl;
+          
+          for (int i = 0; i < summonsToCreate; i++) {
+            auto airElemental = std::make_unique<Minion>("Air Elemental", 0, 1, 1, "");
+            airElemental->setOwner(owner);
+            
+            Minion* minionPtr = airElemental.get();
+            owner->getBoard().addMinion(std::move(airElemental));
+            
+            // Trigger minion enters play for each summoned minion
+            game->getTriggerManager().notifyMinionEnters(minionPtr, game);
+          }
+        });
+      
+      minion->setActivatedAbility(std::move(ability));
+      return minion;
+    }},
 
     // Spells
     // {"Disenchant", []() { return std::make_unique<Spell>("Disenchant", 1, "Destroy the top enchantment on target minion."); }},

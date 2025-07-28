@@ -8,17 +8,18 @@
 
 class Game;
 class Player;
+class AbilityCommand;
 
 class Minion : public Card {
 protected:
   int baseAttack;
   int baseDefence;
   int currentActions;
-  // TODO: Add ability vectors in later steps
+  std::unique_ptr<AbilityCommand> activatedAbility;
 
 public:
   Minion(const std::string& name, int cost, int att, int def, const std::string& desc);
-  ~Minion() = default;
+  ~Minion();
   Minion(const Minion&) = delete;
   Minion& operator=(const Minion&) = delete;
 
@@ -35,6 +36,13 @@ public:
   void restoreActions();
   bool hasActions() const;
   void useAction();
+
+  // Ability management
+  void setActivatedAbility(std::unique_ptr<AbilityCommand> ability);
+  void useAbility(Target target, Game* game);
+  bool hasActivatedAbility() const;
+  int getAbilityCost(int abilityIndex) const;
+  const std::string& getAbilityDescription(int abilityIndex) const;
 
   // Getters
   virtual int getAttack() const;
