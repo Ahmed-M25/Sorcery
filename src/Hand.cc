@@ -4,7 +4,7 @@
 Hand::Hand() {}
 
 void Hand::addCard(std::unique_ptr<Card> card) {
-  if (!isFull() && card) {
+  if (card) {
     cards.push_back(std::move(card));
   }
 }

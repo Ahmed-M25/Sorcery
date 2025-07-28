@@ -40,21 +40,47 @@ void GameDisplay::displayBoard(Player* p1, Player* p2) {
 }
 
 void GameDisplay::displayHand(Player* player) {
-  std::vector<card_template_t> handCards;
+  int totalCards = player->getHand().size();
   
-  // Get up to 5 cards from hand
-  for (int i = 0; i < 5; i++) {
-    if (i < player->getHand().size()) {
-      Card* card = player->getHand().getCard(i);
-      handCards.push_back(getCardTemplate(card));
-    } 
-    else {
-      handCards.push_back(CARD_TEMPLATE_EMPTY);
+  if (totalCards == 0) {
+    // Show one row of 5 empty slots when hand is completely empty
+    std::vector<card_template_t> emptyRow;
+    for (int i = 0; i < 5; i++) {
+      emptyRow.push_back(CARD_TEMPLATE_EMPTY);
     }
+    displayCardsHorizontally(emptyRow);
+    return;
   }
   
-  // Display cards side by side
-  displayCardsHorizontally(handCards);
+  // Calculate number of complete rows + any partial row
+  int completeRows = totalCards / 5;
+  int remainingCards = totalCards % 5;
+  int totalRows = completeRows + (remainingCards > 0 ? 1 : 0);
+  
+  // Display each row
+  for (int row = 0; row < totalRows; row++) {
+    std::vector<card_template_t> rowCards;
+    
+    // Determine how many slots to show in this row
+    int slotsInThisRow = 5; // Always show 5 slots per row
+    
+    // Fill this row
+    for (int col = 0; col < slotsInThisRow; col++) {
+      int cardIndex = row * 5 + col;
+      
+      if (cardIndex < totalCards) {
+        // Add actual card
+        Card* card = player->getHand().getCard(cardIndex);
+        rowCards.push_back(getCardTemplate(card));
+      } 
+      else {
+        // Add empty slot for remaining positions in the row
+        rowCards.push_back(CARD_TEMPLATE_EMPTY);
+      }
+    }
+    
+    displayCardsHorizontally(rowCards);
+  }
 }
 
 void GameDisplay::displayCard(Card* card) {

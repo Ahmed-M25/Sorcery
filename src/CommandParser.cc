@@ -243,6 +243,32 @@ void CommandParser::execute(const std::string&command, Game* game) {
   else if (cmd == "end") {
     game->nextTurn();
   }
+  else if (cmd == "draw" && game->isTestingMode()) {
+    Player* activePlayer = game->getActivePlayer();
+    activePlayer->drawCard(game);
+  }
+  else if (cmd == "discard" && game->isTestingMode() && tokens.size() == 2) {
+    try {
+      int cardIndex = std::stoi(tokens[1]);
+      Player* activePlayer = game->getActivePlayer();
+      
+      // Convert to 0-indexed
+      int zeroIndexed = cardIndex - 1;
+      
+      // Remove the card
+      auto discardedCard = activePlayer->getHand().removeCard(zeroIndexed);
+      
+      if (discardedCard) {
+        std::cout << activePlayer->getName() << " discards " << discardedCard->getName() << "." << std::endl;
+        // Card is automatically destroyed when discardedCard goes out of scope
+      } else {
+        std::cout << "Invalid card index! Hand has " << activePlayer->getHand().size() << " cards." << std::endl;
+      }
+    }
+    catch (const std::exception& e) {
+      std::cout << "Invalid card number!" << std::endl;
+    }
+  }
   else {
     std::cout << "Unknown command: " << command << std::endl;
     std::cout << "Type 'help' for available commands." << std::endl;

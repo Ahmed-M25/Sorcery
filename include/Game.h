@@ -50,6 +50,8 @@ public:
 
   // Setup
   void parseCommandLineArgs(int argc, char** argv);
+
+  bool isTestingMode() const { return testingMode; }
 };
 
 #endif

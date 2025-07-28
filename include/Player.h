@@ -29,6 +29,7 @@ public:
 
   // Deck and Hand management
   void drawCard();
+  void drawCard(Game* game);  // For testing mode
   void loadDeck(const std::string& filename);
   void shuffleDeck();
   void playCard(int index, Target target, Game* game);
@@ -49,7 +50,7 @@ public:
   bool canAfford(int cost) const;
   void payMagic(int cost);
 
-  // Basic getters for testing
+  // Getters
   Hand& getHand() { return hand; }
   Deck& getDeck() { return deck; }
   Board& getBoard() { return board; }
@@ -57,6 +58,8 @@ public:
   Ritual* getRitual() const { return ritual.get(); }
   int getLife() const { return life; }
   int getMagic() const { return magic; }
+
+  void setMagic(int amount);
 };
 
 #endif
