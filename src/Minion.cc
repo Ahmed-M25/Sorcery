@@ -2,6 +2,7 @@
 #include "../include/Game.h"
 #include "../include/Player.h"
 #include "../include/EnchantmentDecorator.h"
+#include "../include/TriggeredAbility.h"
 #include "../include/AbilityCommand.h"
 #include <iostream>
 
@@ -17,7 +18,12 @@ void Minion::play(Target target, Game* game) {
 std::unique_ptr<Card> Minion::clone() const {
   auto cloned = std::make_unique<Minion>(name, cost, baseAttack, baseDefence, description);
   
-  // Clone the single activated ability
+  // Clone the triggered ability
+  if (triggeredAbility) {
+    cloned->setTriggeredAbility(triggeredAbility->clone());
+  }
+
+  // Clone the activated ability
   if (activatedAbility) {
     cloned->setActivatedAbility(activatedAbility->clone());
   }
@@ -89,6 +95,25 @@ void Minion::useAction() {
   }
 }
 
+// Triggered minion abilities
+void Minion::setTriggeredAbility(std::unique_ptr<TriggeredAbility> ability) {
+  triggeredAbility = std::move(ability);
+}
+
+bool Minion::hasTriggeredAbility() const {
+  return triggeredAbility != nullptr;
+}
+
+TriggeredAbility* Minion::getTriggeredAbility() const {
+  return triggeredAbility.get();
+}
+
+const std::string& Minion::getTriggeredDescription() const {
+  static const std::string empty = "";
+  return triggeredAbility ? triggeredAbility->getDescription() : empty;
+}
+
+// Activated minion abilities
 void Minion::setActivatedAbility(std::unique_ptr<AbilityCommand> ability) {
   activatedAbility = std::move(ability);
 }
