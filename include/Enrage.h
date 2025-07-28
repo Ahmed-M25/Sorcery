@@ -9,14 +9,15 @@ public:
   Enrage();
   std::unique_ptr<Card> clone() const override;
   void play(Target target, Game* game) override;
-  EnchantmentDecorator* createDecorator(Minion* target) const override;
 };
 
 class EnrageDecorator : public EnchantmentDecorator {
 public:
-  EnrageDecorator(Minion* minion);
-  int getAttack() const override;
-  int getDefence() const override;
+  EnrageDecorator();
+  int getModifiedAttack(int baseAttack) const override;
+  int getModifiedDefence(int baseDefence) const override;
+  int getModifiedActions(int baseActions) const override;
+  std::string getName() const override;
 };
 
 #endif 

@@ -7,6 +7,10 @@ std::string Enchantment::getType() const {
     return "Enchantment";
 }
 
+bool Enchantment::requiresTarget() const {
+    return true; // All enchantments require targeting
+}
+
 void Enchantment::play(Target, Game*) {
 }
 

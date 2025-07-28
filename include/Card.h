@@ -23,6 +23,7 @@ public:
   virtual void play(Target target, Game* game) = 0;
   virtual std::unique_ptr<Card> clone() const = 0;
   virtual std::string getType() const = 0;
+  virtual bool requiresTarget() const { return false; } // Default implementation - override in subclasses
 
   // Basic functionality
   void setOwner(Player* player);

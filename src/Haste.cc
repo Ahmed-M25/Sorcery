@@ -1,20 +1,20 @@
-#include "../include/GiantStrength.h"
+#include "../include/Haste.h"
 #include "../include/EnchantmentDecorator.h"
 #include "../include/Player.h"
 #include "../include/Minion.h"
 #include "../include/Game.h"
 #include <iostream>
 
-GiantStrength::GiantStrength()
-  : Enchantment("Giant Strength", 1, "Give enchanted minion +2/+2") {}
+Haste::Haste()
+  : Enchantment("Haste", 1, "Give enchanted minion +2/+2") {}
 
-std::unique_ptr<Card> GiantStrength::clone() const {
-  return std::make_unique<GiantStrength>(*this);
+std::unique_ptr<Card> Haste::clone() const {
+  return std::make_unique<Haste>(*this);
 }
 
 
 
-void GiantStrength::play(Target target, Game* game) {
+void Haste::play(Target target, Game* game) {
     if (!target.isValidTarget(game) || target.Ritual() || target.targetsPlayer()) {
         std::cout << "Invalid target for Giant Strength.\n";
         return;
@@ -29,23 +29,23 @@ void GiantStrength::play(Target target, Game* game) {
     }
 
     std::cout << "Giant Strength gives " << minion->getName() << " +2/+2.\n";
-    minion->addEnchantment(std::make_unique<GiantStrengthDecorator>());
+    minion->addEnchantment(std::make_unique<HasteDecorator>());
 }
 
-GiantStrengthDecorator::GiantStrengthDecorator() {}
+HasteDecorator::HasteDecorator() {}
 
-int GiantStrengthDecorator::getModifiedAttack(int baseAttack) const {
+int HasteDecorator::getModifiedAttack(int baseAttack) const {
   return baseAttack + 2;
 }
 
-int GiantStrengthDecorator::getModifiedDefence(int baseDefence) const {
+int HasteDecorator::getModifiedDefence(int baseDefence) const {
   return baseDefence + 2;
 }
 
-std::string GiantStrengthDecorator::getName() const {
+std::string HasteDecorator::getName() const {
   return "Giant Strength";
 }
 
-int GiantStrengthDecorator::getModifiedActions(int baseActions) const {
+int HasteDecorator::getModifiedActions(int baseActions) const {
   return baseActions;
 }

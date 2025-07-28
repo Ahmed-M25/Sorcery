@@ -1,19 +1,19 @@
-#ifndef GIANT_STRENGTH_H
-#define GIANT_STRENGTH_H
+#ifndef HASTE_H
+#define HASTE_H
 
 #include "Enchantment.h"
 #include "EnchantmentDecorator.h"
 
-class GiantStrength : public Enchantment {
+class Haste : public Enchantment {
 public:
-  GiantStrength();
+  Haste();
   std::unique_ptr<Card> clone() const override;
   void play(Target target, Game* game) override;
 };
 
-class GiantStrengthDecorator : public EnchantmentDecorator {
+class HasteDecorator : public EnchantmentDecorator {
 public:
-  GiantStrengthDecorator();
+  HasteDecorator();
   int getModifiedAttack(int baseAttack) const override;
   int getModifiedDefence(int baseDefence) const override;
   int getModifiedActions(int baseActions) const override;

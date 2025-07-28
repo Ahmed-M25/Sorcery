@@ -16,6 +16,7 @@ public:
   std::string getType() const {
     return "Spell";
   }
+  virtual bool requiresTarget() const { return true; } // Default for spells is to require targeting
 
 };
 

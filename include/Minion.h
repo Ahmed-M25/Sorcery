@@ -6,8 +6,10 @@
 #include <vector>
 #include <memory>
 
+
 class Game;
 class Player;
+class EnchantmentDecorator;
 class AbilityCommand;
 class TriggeredAbility;
 
@@ -16,6 +18,7 @@ protected:
   int baseAttack;
   int baseDefence;
   int currentActions;
+  std::unique_ptr<class EnchantmentList> enchantments;
   std::unique_ptr<TriggeredAbility> triggeredAbility;
   std::unique_ptr<AbilityCommand> activatedAbility;
 
@@ -24,7 +27,6 @@ public:
   ~Minion();
   Minion(const Minion&) = delete;
   Minion& operator=(const Minion&) = delete;
-
 
   virtual void play(Target target, Game* game) override;
   std::unique_ptr<Card> clone() const override;
@@ -59,7 +61,13 @@ public:
   // Setters
   void setAttack(int att);
   void setDefence(int def);
+  void setActions(int act)
 
+  // Enchantment management
+  void addEnchantment(std::unique_ptr<EnchantmentDecorator> enchantment);
+  void removeTopEnchantment();
+  bool hasEnchantments() const;
+  const std::vector<std::unique_ptr<EnchantmentDecorator>>& getEnchantments() const;
 };
 
 #endif

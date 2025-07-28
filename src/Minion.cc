@@ -2,11 +2,14 @@
 #include "../include/Game.h"
 #include "../include/Player.h"
 #include "../include/EnchantmentDecorator.h"
+#include "../include/EnchantmentList.h"
 #include "../include/TriggeredAbility.h"
 #include "../include/AbilityCommand.h"
 #include <iostream>
 
-Minion::Minion(const std::string& name, int cost, int att, int def, const std::string& desc) : Card{name, cost, desc}, baseAttack{att}, baseDefence{def}, currentActions{0} {}
+Minion::Minion(const std::string& name, int cost, int att, int def, const std::string& desc) : Card{name, cost, desc}, baseAttack{att}, baseDefence{def}, currentActions{0}, enchantments{std::make_unique<EnchantmentList>()} {}
+
+Minion::~Minion() = default;
 
 Minion::~Minion() = default;
 
@@ -34,6 +37,8 @@ std::unique_ptr<Card> Minion::clone() const {
 std::string Minion::getType() const {
   return "Minion";
 }
+
+
 
 void Minion::attackPlayer(Player* target, Game* game) {
   std::cout << name << " attacks " << target->getName() << " for " << getAttack() << " damage!\n";
@@ -157,11 +162,35 @@ const std::string& Minion::getAbilityDescription(int abilityIndex) const {
 }
 
 int Minion::getAttack() const {
-  return baseAttack;
+  int attack = baseAttack;
+  for (const auto& enchantment : enchantments->getEnchantments()) {
+    attack = enchantment->getModifiedAttack(attack);
+  }
+  return attack;
 }
 
 int Minion::getDefence() const {
-  return baseDefence;
+  int defence = baseDefence;
+  for (const auto& enchantment : enchantments->getEnchantments()) {
+    defence = enchantment->getModifiedDefence(defence);
+  }
+  return defence;
+}
+
+void Minion::addEnchantment(std::unique_ptr<EnchantmentDecorator> enchantment) {
+  enchantments->addEnchantment(std::move(enchantment));
+}
+
+void Minion::removeTopEnchantment() {
+  enchantments->removeTopEnchantment();
+}
+
+bool Minion::hasEnchantments() const {
+  return enchantments->hasEnchantments();
+}
+
+const std::vector<std::unique_ptr<EnchantmentDecorator>>& Minion::getEnchantments() const {
+  return enchantments->getEnchantments();
 }
 
 void Minion::setAttack(int att) {
@@ -172,3 +201,6 @@ void Minion::setDefence(int def) {
   baseDefence = def;
 }
 
+void Minion::setActions(int act) {
+  currentActions = act;
+}

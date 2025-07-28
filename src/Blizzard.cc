@@ -11,6 +11,10 @@ std::unique_ptr<Card> Blizzard::clone() const {
   return std::make_unique<Blizzard>(getName(), getCost(), getDescription());
 }
 
+bool Blizzard::requiresTarget() const {
+  return false; // Blizzard affects all minions, no targeting required
+}
+
 void Blizzard::play(Target, Game* game) {
   std::cout << "Blizzard deals 2 damage to all minions!\n";
 

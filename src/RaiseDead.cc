@@ -12,6 +12,10 @@ std::unique_ptr<Card> RaiseDead::clone() const {
   return std::make_unique<RaiseDead>(getName(), getCost(), getDescription());
 }
 
+bool RaiseDead::requiresTarget() const {
+  return false; // RaiseDead affects your own graveyard, no targeting required
+}
+
 void RaiseDead::play(Target, Game* game) {
   Player* me = game->getActivePlayer();
   auto& graveyard = me->getGraveyard();
