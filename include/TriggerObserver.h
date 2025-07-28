@@ -28,6 +28,8 @@ public:
     bool matchesTrigger(const std::string& eventType) const;
     std::string getTriggerType() const;
     int getCost() const;
+    
+    const std::string& getDescription() const { return description; }
 };
 
 

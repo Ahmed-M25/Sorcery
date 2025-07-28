@@ -11,6 +11,9 @@
 #include "../include/Recharge.h"
 #include "../include/GiantStrength.h"
 #include "../include/Enrage.h"
+#include "../include/BoneGolemTrigger.h"
+#include "../include/FireElementalTrigger.h"
+#include "../include/PotionSellerTrigger.h"
 #include "../include/ActivatedAbility.h"
 #include <iostream>
 #include <unordered_map>
@@ -25,14 +28,38 @@ std::unique_ptr<Card> CardFactory::createCard(const std::string& name) {
     // Minions
     {"Air Elemental", []() { return std::make_unique<Minion>("Air Elemental", 0, 1, 1, ""); }},
     {"Earth Elemental", []() { return std::make_unique<Minion>("Earth Elemental", 3, 4, 4, ""); }},
-    {"Bone Golem", []() { return std::make_unique<Minion>("Bone Golem", 2, 1, 3, "Gain +1/+1 whenever a minion leaves play."); }},
-    {"Fire Elemental", []() { return std::make_unique<Minion>("Fire Elemental", 2, 2, 2, "Whenever an opponent's minion enters play, deal 1 damage to it."); }},
-    {"Potion Seller", []() { return std::make_unique<Minion>("Potion Seller", 2, 1, 3, "At the end of your turn, all your minions gain +0/+1."); }},
+
+    // Triggerd ability minions
+    {"Bone Golem", []() {
+      auto minion =  std::make_unique<Minion>("Bone Golem", 2, 1, 3, "Gain +1/+1 whenever a minion leaves play.");
+
+      auto trigger = std::make_unique<BoneGolemTrigger>(minion.get());
+      minion->setTriggeredAbility(std::move(trigger));
+
+      return minion;
+    }},
+    {"Fire Elemental", []() {
+      auto minion = std::make_unique<Minion>("Fire Elemental", 2, 2, 2, "Whenever an opponent's minion enters play, deal 1 damage to it.");
+      
+      auto trigger = std::make_unique<FireElementalTrigger>(minion.get());
+      minion->setTriggeredAbility(std::move(trigger));
+
+      return minion;
+    }},
+    {"Potion Seller", []() {
+      auto minion = std::make_unique<Minion>("Potion Seller", 2, 1, 3, "At the end of your turn, all your minions gain +0/+1.");
+
+      auto trigger = std::make_unique<PotionSellerTrigger>(minion.get());
+      minion->setTriggeredAbility(std::move(trigger));
+
+      return minion;
+    }},
     
     // Activated ability minions
     {"Novice Pyromancer", []() { 
       auto minion = std::make_unique<Minion>("Novice Pyromancer", 1, 0, 1, "Deal 1 damage to target minion.");
       
+      // Add activated ability: Deal 1 damage to target minion (costs 1 magic)
       auto ability = std::make_unique<ActivatedAbility>("Deal 1 damage to target minion", 1,
         [](Target target, Game* game) {
           if (!target.isValidTarget(game) || target.Ritual()) {
@@ -55,6 +82,7 @@ std::unique_ptr<Card> CardFactory::createCard(const std::string& name) {
     {"Apprentice Summoner", []() {
       auto minion = std::make_unique<Minion>("Apprentice Summoner", 1, 1, 1, "Summon a 1/1 air elemental.");
       
+      // Add activated ability: Summon a 1/1 air elemental (costs 1 magic)
       auto ability = std::make_unique<ActivatedAbility>("Summon a 1/1 air elemental", 1,
         [](Target target, Game* game) {
           Player* owner = game->getActivePlayer();
@@ -82,6 +110,7 @@ std::unique_ptr<Card> CardFactory::createCard(const std::string& name) {
     {"Master Summoner", []() {
       auto minion = std::make_unique<Minion>("Master Summoner", 3, 2, 3, "Summon up to three 1/1 air elementals.");
       
+      // Add activated ability: Summon up to three 1/1 air elementals (costs 2 magic)
       auto ability = std::make_unique<ActivatedAbility>("Summon up to three 1/1 air elementals", 2,
         [](Target target, Game* game) {
           Player* owner = game->getActivePlayer();

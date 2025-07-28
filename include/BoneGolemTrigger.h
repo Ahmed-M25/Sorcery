@@ -2,26 +2,18 @@
 #define BONE_GOLEM_TRIGGER_H
 
 #include "TriggeredAbility.h"
-#include "Minion.h"
+
+class Minion;
 
 class BoneGolemTrigger : public TriggeredAbility {
-  Minion* source;              // the Bone Golem itself
+private:
+  Minion* source;  // The Bone Golem itself
+
 public:
-  BoneGolemTrigger(Minion* src)
-    : TriggeredAbility("Gain +1/+1 whenever a minion leaves play",
-                        0,                  // cost (unused)
-                        "minionleaves"),    // triggerType
-      source{src} {}
-
-  TriggerObserver* clone() const override {
-    return new BoneGolemTrigger(source);
-  }
-
-  void execute(Target, Game* game) override {
-    // only buff *this* Bone Golem
-    source->modifyStats(1,1);
-    std::cout << source->getName() << " gains +1/+1 from Bone Golem trigger.\n";
-  }
+  BoneGolemTrigger(Minion* src);
+  
+  std::unique_ptr<TriggeredAbility> clone() const override;
+  void execute(Game* game) override;
 };
 
 #endif

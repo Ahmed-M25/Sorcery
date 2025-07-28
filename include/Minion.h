@@ -9,12 +9,14 @@
 class Game;
 class Player;
 class AbilityCommand;
+class TriggeredAbility;
 
 class Minion : public Card {
 protected:
   int baseAttack;
   int baseDefence;
   int currentActions;
+  std::unique_ptr<TriggeredAbility> triggeredAbility;
   std::unique_ptr<AbilityCommand> activatedAbility;
 
 public:
@@ -37,7 +39,13 @@ public:
   bool hasActions() const;
   void useAction();
 
-  // Ability management
+  // Triggered ability management  
+  void setTriggeredAbility(std::unique_ptr<TriggeredAbility> ability);
+  bool hasTriggeredAbility() const;
+  TriggeredAbility* getTriggeredAbility() const;
+  const std::string& getTriggeredDescription() const;
+
+  // Activated ability management
   void setActivatedAbility(std::unique_ptr<AbilityCommand> ability);
   void useAbility(Target target, Game* game);
   bool hasActivatedAbility() const;
