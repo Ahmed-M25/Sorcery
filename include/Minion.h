@@ -56,6 +56,7 @@ public:
   // Getters
   virtual int getAttack() const;
   virtual int getDefence() const;
+  int getActions() const;
 
   // Setters
   void setAttack(int att);

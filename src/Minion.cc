@@ -234,3 +234,7 @@ void Minion::setDefence(int def) {
 void Minion::setActions(int act) {
   currentActions = act;
 }
+
+int Minion::getActions() const {
+  return currentActions;
+}

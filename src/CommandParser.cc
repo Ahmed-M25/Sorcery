@@ -229,7 +229,7 @@ void CommandParser::execute(const std::string&command, Game* game) {
         std::cout << "No minion at position " << minionIndex << std::endl;
         return;
       }
-
+      std::cout << "Actions: " << minion->getActions() << std::endl;
       // Display the minion card
       GameDisplay::displayCard(minion);
       
