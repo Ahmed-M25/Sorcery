@@ -195,7 +195,16 @@ card_template_t GameDisplay::getCardTemplate(Card* card) {
     return display_spell(card->getName(), card->getCost(), card->getDescription());
   }
   else if (type == "Enchantment") {
-    return display_enchantment(card->getName(), card->getCost(), card->getDescription());
+    // Use attack/defense template for enchantments that modify stats
+    if (card->getName() == "Giant Strength") {
+      return display_enchantment_attack_defence(card->getName(), card->getCost(), 
+                                               card->getDescription(), "+2", "+2");
+    } else if (card->getName() == "Enrage") {
+      return display_enchantment_attack_defence(card->getName(), card->getCost(), 
+                                               card->getDescription(), "*2", "*2");
+    } else {
+      return display_enchantment(card->getName(), card->getCost(), card->getDescription());
+    }
   }
   
   return CARD_TEMPLATE_EMPTY;
