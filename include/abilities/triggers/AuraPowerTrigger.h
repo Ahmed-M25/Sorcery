@@ -1,6 +1,7 @@
 #ifndef AURA_POWER_TRIGGER_H
 #define AURA_POWER_TRIGGER_H
 
+#include <memory>
 #include "../TriggeredAbility.h"
 
 class Player;

@@ -1,6 +1,7 @@
 #ifndef POTION_SELLER_TRIGGER_H
 #define POTION_SELLER_TRIGGER_H
 
+#include <memory>
 #include "../TriggeredAbility.h"
 
 class Minion;

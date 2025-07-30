@@ -1,6 +1,7 @@
 #ifndef FIRE_ELEMENTAL_TRIGGER_H
 #define FIRE_ELEMENTAL_TRIGGER_H
 
+#include <memory>
 #include "../TriggeredAbility.h"
 
 class Minion;

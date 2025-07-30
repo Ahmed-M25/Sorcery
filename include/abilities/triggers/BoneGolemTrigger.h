@@ -1,6 +1,7 @@
 #ifndef BONE_GOLEM_TRIGGER_H
 #define BONE_GOLEM_TRIGGER_H
 
+#include <memory>
 #include "../TriggeredAbility.h"
 
 class Minion;

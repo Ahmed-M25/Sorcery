@@ -1,6 +1,7 @@
 #ifndef TRIGGEREDABILITY_H
 #define TRIGGEREDABILITY_H
 
+#include <memory>
 #include "TriggerObserver.h"
 #include "../core/Target.h"
 

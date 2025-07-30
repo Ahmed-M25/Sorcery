@@ -1,6 +1,7 @@
 #ifndef DARK_RITUAL_TRIGGER_H
 #define DARK_RITUAL_TRIGGER_H
 
+#include <memory>
 #include "../TriggeredAbility.h"
 
 class Player;

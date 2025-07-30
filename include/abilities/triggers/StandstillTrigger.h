@@ -1,6 +1,7 @@
 #ifndef STANDSTILL_TRIGGER_H
 #define STANDSTILL_TRIGGER_H
 
+#include <memory>
 #include "../TriggeredAbility.h"
 
 class Player;

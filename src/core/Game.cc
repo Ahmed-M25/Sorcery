@@ -52,7 +52,8 @@ void Game::startGame() {
     currentPlayer = player1.get();
 
     std::cout << "Names loaded from init file: " << player1->getName() << " vs " << player2->getName() << "\n";
-  } else {
+  } 
+  else {
     // Get player names
     std::string name1, name2;
     std::cout << "Player 1, enter your name: ";
@@ -150,12 +151,12 @@ void Game::displayBoard() {
 
 void Game::checkWinCondition() {
   if (player1->isDead()) {
-    std::cout << player2->getName() << "wins!" << std::endl;
     gameOver = true;
+    GameDisplay::displayGameOver(player2->getName() + " wins!");
   }
   else if (player2->isDead()) {
-    std::cout << player1->getName() << " wins!" << std::endl;
     gameOver = true;
+    GameDisplay::displayGameOver(player1->getName() + " wins!");
   }
 }
 
